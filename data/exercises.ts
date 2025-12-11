@@ -4,131 +4,262 @@
  * Exercises are the learning steps that wrap drum patterns with instructions.
  * Each exercise teaches one concept at a time.
  *
- * HOW TO ADD A NEW EXERCISE:
- * 1. Copy an existing exercise object
- * 2. Give it a unique id
- * 3. Set the level number (1, 2, 3...)
- * 4. Write clear instructions in markdown
- * 5. Either:
- *    - Use patternId to reference a pattern from patterns.ts
- *    - OR provide an inline pattern object
- * 6. Add the exercise ID to the relevant level in levels.ts
+ * Level 1 follows a carefully designed pedagogical sequence:
+ * 1. Pulse/counting → 2-4. Individual limbs → 5-8. Simple grooves → 9-10. Eighth notes
  */
 
 import { Exercise } from "@/types";
 
 export const exercises: Exercise[] = [
-  {
-    id: "level-1-ex-1",
-    title: "Listen and Feel the Beat",
-    level: 1,
-    type: "groove",
-    instructions: `
-Welcome to your first drum lesson!
-
-**Listen** to the simple pattern playing. Notice how the drums work together:
-- The **hi hat** (top) keeps steady time
-- The **snare** (middle) gives the backbeat
-- The **kick** (bottom) is the heartbeat
-
-Just listen for now. Can you tap your foot along with the beat?
-
-Press play and close your eyes. Feel the groove!
-    `,
-    counting: "1 & 2 & 3 & 4 &",
-    tempoBpm: 70,
-    durationBars: 4,
-    patternId: "simple-quarters",
-  },
+  // ============ LEVEL 1: YOUR FIRST GROOVE ============
 
   {
-    id: "level-1-ex-2",
-    title: "Count Along",
+    id: "l1-01-counting",
+    title: "Counting 1 2 3 4",
     level: 1,
     type: "timing",
     instructions: `
-Now let's **count along** with the beat!
+Welcome to your first drumming lesson!
 
-Say the numbers out loud: **"1, 2, 3, 4"** over and over.
+Before we play any drums, we need to learn the **steady beat**.
 
-The **hi hat** and **kick** happen on the numbers.
-The **snare** happens on 2 and 4.
+**What to do:**
+- Listen to the metronome click
+- Tap along on any drum (or just clap!) on beats **1, 2, 3, 4**
+- Keep it steady and relaxed
 
-👉 **Try it**: Count "1, 2, 3, 4" whilst the pattern plays. Keep counting even if you lose track - you'll get it!
+The metronome will click four times: **1, 2, 3, 4**. Try to tap exactly when you hear each click.
+
+Don't worry about which drum - just feel that steady pulse!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 60,
+    durationBars: 4,
+    patternId: "l1-counting",
+  },
+
+  {
+    id: "l1-02-hihat-quarters",
+    title: "Hi Hat on Every Beat",
+    level: 1,
+    type: "groove",
+    instructions: `
+Now let's play your **first real drum**: the hi hat!
+
+The hi hat is the shimmery cymbal you play with your right hand (or left if you're left-handed).
+
+**What to do:**
+- Play the hi hat four times: **1, 2, 3, 4**
+- Keep it steady like a clock ticking
+- Use your keyboard **Spacebar** or tap the **Hi Hat button** below
+
+Listen first, then try playing along. It's OK if you don't hit every beat perfectly - that will come with practice!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 65,
+    durationBars: 4,
+    patternId: "l1-hihat-quarters",
+  },
+
+  {
+    id: "l1-03-snare-quarters",
+    title: "Snare on Every Beat",
+    level: 1,
+    type: "groove",
+    instructions: `
+Time to learn the **snare drum**!
+
+The snare is the sharp, cracking sound. You play it with your left hand (or right if you're left-handed).
+
+**What to do:**
+- Play the snare four times: **1, 2, 3, 4**
+- It's just like the hi hat, but with a different drum
+- Use your keyboard **J key** or tap the **Snare button** below
+
+Keep it steady. If you miss a beat, don't stop - just keep going!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 65,
+    durationBars: 4,
+    patternId: "l1-snare-quarters",
+  },
+
+  {
+    id: "l1-04-kick-quarters",
+    title: "Kick on Every Beat",
+    level: 1,
+    type: "groove",
+    instructions: `
+Now for the **kick drum** - the big bass drum you play with your foot!
+
+The kick makes that deep "boom" sound that you feel in your chest.
+
+**What to do:**
+- Play the kick four times: **1, 2, 3, 4**
+- Use your keyboard **F key** or tap the **Kick button** below
+- Nice and steady - boom, boom, boom, boom!
+
+On a real drum kit, you'd use your right foot on a pedal. For now, just press F!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 65,
+    durationBars: 4,
+    patternId: "l1-kick-quarters",
+  },
+
+  {
+    id: "l1-05-backbeat-intro",
+    title: "Hi Hat Steady, Snare on 3",
+    level: 1,
+    type: "groove",
+    instructions: `
+Now we're going to play **two things at once**!
+
+This is called the **backbeat** - it's super important in rock and pop music.
+
+**What to do:**
+- Play hi hat on **1, 2, 3, 4** (right hand, Spacebar)
+- Play snare **only on beat 3** (left hand, J key)
+
+So it goes:
+**1** (hi hat) → **2** (hi hat) → **3** (hi hat + snare together!) → **4** (hi hat)
+
+Start slow. Listen to the pattern first, then join in. You're doing great!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 70,
+    durationBars: 4,
+    patternId: "l1-backbeat-intro",
+  },
+
+  {
+    id: "l1-06-downbeat-intro",
+    title: "Hi Hat Steady, Kick on 1",
+    level: 1,
+    type: "groove",
+    instructions: `
+Time to bring in your **foot**!
+
+**What to do:**
+- Play hi hat on **1, 2, 3, 4** (right hand, Spacebar)
+- Play kick **only on beat 1** (foot, F key)
+
+So it goes:
+**1** (hi hat + kick together!) → **2** (hi hat) → **3** (hi hat) → **4** (hi hat)
+
+Beat 1 is called the **downbeat** - it's where the groove lands. Feel that solid thump at the start!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 70,
+    durationBars: 4,
+    patternId: "l1-downbeat-intro",
+  },
+
+  {
+    id: "l1-07-first-groove",
+    title: "First Groove: Kick 1, Snare 3",
+    level: 1,
+    type: "groove",
+    instructions: `
+🎉 **This is your first proper groove!**
+
+Now we put it all together:
+
+**What to do:**
+- Hi hat on **1, 2, 3, 4** (right hand, Spacebar)
+- Kick on **beat 1** (foot, F key)
+- Snare on **beat 3** (left hand, J key)
+
+So:
+**1** (hi hat + kick) → **2** (hi hat only) → **3** (hi hat + snare) → **4** (hi hat only)
+
+This is a **real drum beat**! Take your time, and remember: steady wins!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 70,
+    durationBars: 4,
+    patternId: "l1-first-groove",
+  },
+
+  {
+    id: "l1-08-groove-variation",
+    title: "Groove Variation: Kick 1 and 3",
+    level: 1,
+    type: "groove",
+    instructions: `
+Let's make that groove a bit **fuller**!
+
+Same as before, but now we add a kick on beat 3 as well.
+
+**What to do:**
+- Hi hat on **1, 2, 3, 4** (Spacebar)
+- Kick on **beats 1 and 3** (F key)
+- Snare on **beat 3** (J key)
+
+Beat 3 is the trickiest: you play **kick and snare at the same time**!
+On a keyboard, press F and J together. On a drum kit, it's left hand and right foot together.
+
+You've got this!
+    `,
+    counting: "1 2 3 4",
+    tempoBpm: 75,
+    durationBars: 4,
+    patternId: "l1-groove-variation",
+  },
+
+  {
+    id: "l1-09-hihat-eighths",
+    title: "Introducing the \"And\": Hi Hat Eighth Notes",
+    level: 1,
+    type: "timing",
+    instructions: `
+Ready to go **twice as fast**?
+
+Up until now, the hi hat has played four times: **1, 2, 3, 4**.
+
+Now we're going to play it **eight times** by adding the **"and"** in between each beat:
+
+**1 and 2 and 3 and 4 and**
+
+**What to do:**
+- Play hi hat eight times (Spacebar)
+- Count out loud: "1 and 2 and 3 and 4 and"
+- Keep it smooth and even
+
+This is called **eighth notes**. It sounds like a galloping horse! 🐴
     `,
     counting: "1 & 2 & 3 & 4 &",
     tempoBpm: 70,
     durationBars: 4,
-    patternId: "simple-quarters",
+    patternId: "l1-hihat-eighths",
   },
 
   {
-    id: "level-1-ex-3",
-    title: "Say 'Boots and Cats'",
+    id: "l1-10-and-kick-groove",
+    title: "First Groove with an \"And\" Kick",
     level: 1,
     type: "groove",
     instructions: `
-Here's a fun trick drummers use!
+🎸 **Your first proper rock beat!**
 
-Instead of counting, say:
-**"Boots and Cats and Boots and Cats and..."**
+Now we combine everything:
+- Hi hat playing eighth notes (1 and 2 and 3 and 4 and)
+- Kick on beat 1 AND on the "and" after beat 3
+- Snare on beat 3
 
-- **Boots** = kick drum (the low boom)
-- **Cats** = snare drum (the sharp crack)
-- **and** = hi hat in between
+**What to do:**
+- Hi hat: eight times (Spacebar) - "1 and 2 and 3 and 4 and"
+- Kick: on **1** and on **"and"** after 3 (F key twice)
+- Snare: on **3** (J key)
 
-Press play and try saying it. It's okay if you mess up - that's part of learning!
+The kick on the **"and"** gives the beat that driving rock feel!
+
+This is the sound of real rock music. You're a drummer now! 🥁
     `,
     counting: "1 & 2 & 3 & 4 &",
     tempoBpm: 75,
     durationBars: 4,
-    patternId: "boots-and-cats",
-  },
-
-  {
-    id: "level-1-ex-4",
-    title: "Play Along: Kick Drum",
-    level: 1,
-    type: "groove",
-    instructions: `
-Time to play! Let's start with just the **kick drum**.
-
-**On a computer**: Press the **F key** when you see the kick drum light up.
-
-**On a tablet**: Tap the **Kick button** below the grid.
-
-Don't worry about being perfect. Just try to press when you see the kick notes!
-
-👉 **Tip**: Count "1, 2, 3, 4" and press F on **1** and **3**.
-    `,
-    counting: "1 & 2 & 3 & 4 &",
-    tempoBpm: 70,
-    durationBars: 4,
-    patternId: "boots-and-cats",
-  },
-
-  {
-    id: "level-1-ex-5",
-    title: "Play Along: All Together",
-    level: 1,
-    type: "groove",
-    instructions: `
-Brilliant! Now let's try **all three drums**:
-
-- **F key** = Kick (or tap Kick button)
-- **J key** = Snare (or tap Snare button)
-- **Spacebar** = Hi hat (or tap Hi hat button)
-
-Start slow. It's totally fine to miss some notes!
-
-The hi hat is the trickiest because it plays on every "&". Try focusing on just the **kick and snare** first (F and J keys), then add the hi hat (spacebar) when you feel ready.
-
-Remember: **Boots and Cats!**
-    `,
-    counting: "1 & 2 & 3 & 4 &",
-    tempoBpm: 75,
-    durationBars: 4,
-    patternId: "boots-and-cats",
+    patternId: "l1-and-kick-groove",
   },
 ];
 

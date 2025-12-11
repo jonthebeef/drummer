@@ -17,6 +17,7 @@ interface DrumGridProps {
   currentStep?: number;      // 0-indexed (0-7 for 8 steps), highlights this column
   userHit?: DrumType | null; // Which drum the user just hit (for visual feedback)
   showCounting?: boolean;    // Show counting labels above (1 & 2 & 3 & 4 &)
+  stepFeedback?: (step: number) => "correct" | "incorrect" | null; // Scoring feedback per step
 }
 
 export default function DrumGrid({
@@ -24,6 +25,7 @@ export default function DrumGrid({
   currentStep,
   userHit,
   showCounting = true,
+  stepFeedback,
 }: DrumGridProps) {
   // Get the count label for a step (1, &, 2, &, etc.)
   const getCountLabel = (stepIndex: number): string => {
@@ -69,7 +71,7 @@ export default function DrumGrid({
             {steps.map((stepIndex) => (
               <div
                 key={stepIndex}
-                className="flex-1 text-center text-sm font-mono font-semibold text-gray-600"
+                className="flex-1 text-center text-lg font-mono font-bold text-zinc-400"
               >
                 {getCountLabel(stepIndex)}
               </div>
@@ -83,7 +85,7 @@ export default function DrumGrid({
         {drums.map((drum) => (
           <div key={drum.type} className="flex items-center">
             {/* Drum label */}
-            <div className="w-24 flex-shrink-0 text-sm font-semibold text-gray-700">
+            <div className="w-24 flex-shrink-0 text-lg font-bold text-zinc-300">
               {drum.label}
             </div>
 
@@ -93,15 +95,18 @@ export default function DrumGrid({
                 const isHit = isDrumHit(stepIndex, drum.type);
                 const isCurrent = currentStep === stepIndex;
                 const isCorrect = isCorrectHit(stepIndex, drum.type);
+                const feedback = stepFeedback ? stepFeedback(stepIndex) : null;
 
                 return (
                   <div
                     key={stepIndex}
                     className={`
                       flex-1 aspect-square rounded-lg border-2 flex items-center justify-center
-                      transition-all duration-100
-                      ${isCurrent ? "border-blue-500 bg-blue-50 scale-105" : "border-gray-200"}
-                      ${isCurrent && !isHit ? "bg-gray-50" : ""}
+                      transition-all duration-200
+                      ${isCurrent ? "border-[#00ff88] bg-zinc-800 scale-105 shadow-lg shadow-[#00ff88]/50" : "border-zinc-700 bg-black"}
+                      ${isCurrent && !isHit ? "bg-zinc-900" : ""}
+                      ${feedback === "correct" && isHit ? "bg-green-900 border-[#00ff88]" : ""}
+                      ${feedback === "incorrect" && isHit ? "bg-red-900 border-[#ff1744]" : ""}
                     `}
                   >
                     {/* Drum hit circle */}
@@ -112,7 +117,9 @@ export default function DrumGrid({
                           ${drum.color}
                           ${isCurrent ? "ring-4 ring-blue-300" : ""}
                           ${isCorrect ? "ring-4 ring-green-400 scale-110" : ""}
-                          transition-all duration-100
+                          ${feedback === "correct" ? "ring-2 ring-green-500" : ""}
+                          ${feedback === "incorrect" ? "ring-2 ring-red-500 opacity-60" : ""}
+                          transition-all duration-200
                         `}
                       />
                     )}
@@ -125,15 +132,15 @@ export default function DrumGrid({
       </div>
 
       {/* Key legend */}
-      <div className="mt-6 text-sm text-gray-600 text-center">
+      <div className="mt-6 text-xl text-zinc-300 text-center font-bold">
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <span className="font-mono bg-gray-100 px-2 py-1 rounded">F</span>
+          <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#2979ff] text-[#2979ff] shadow-lg">F</span>
           <span>= Kick</span>
-          <span className="mx-2">•</span>
-          <span className="font-mono bg-gray-100 px-2 py-1 rounded">J</span>
+          <span className="mx-2 text-zinc-700">•</span>
+          <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#ff1744] text-[#ff1744] shadow-lg">J</span>
           <span>= Snare</span>
-          <span className="mx-2">•</span>
-          <span className="font-mono bg-gray-100 px-2 py-1 rounded">Space</span>
+          <span className="mx-2 text-zinc-700">•</span>
+          <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#00d9ff] text-[#00d9ff] shadow-lg">Space</span>
           <span>= Hi Hat</span>
         </div>
       </div>

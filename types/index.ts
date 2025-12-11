@@ -109,20 +109,41 @@ export interface Level {
 // ============================================================================
 
 /**
- * Progress status for an exercise
+ * Stars earned for an exercise (0-3)
+ * 0 = not attempted, 1 = completed, 2 = good, 3 = excellent
  */
-export type ProgressStatus = "not_started" | "in_progress" | "completed";
+export type Stars = 0 | 1 | 2 | 3;
 
 /**
  * Tracks user progress on an exercise
- * (Not implemented in v1, but structure is ready for later)
+ * Stored in localStorage as a simple key-value store
  */
-export interface UserProgress {
-  userId: string;
+export interface ExerciseProgress {
   exerciseId: string;
-  status: ProgressStatus;
-  lastPractisedAt?: Date;
-  bestTempoBpm?: number;   // Highest tempo they successfully played at
+  stars: Stars;              // Best stars earned (0-3)
+  lastPractisedAt: string;   // ISO date string
+  attempts: number;          // Total number of attempts
+  bestAccuracy: number;      // Best accuracy percentage (0-100)
+}
+
+/**
+ * A drum hit event - normalized from any input source
+ * This abstraction allows keyboard, tap buttons, or MIDI to feed the same scoring system
+ */
+export interface DrumHit {
+  drum: DrumType;
+  timestamp: number;         // Performance.now() timestamp
+}
+
+/**
+ * Result of scoring an attempt
+ */
+export interface ScoringResult {
+  totalSteps: number;        // How many steps were expected
+  correctHits: number;       // How many hits were correct (right drum, right time)
+  accuracy: number;          // Percentage (0-100)
+  stars: Stars;              // Stars earned (0-3)
+  feedback: string;          // Encouraging message
 }
 
 // ============================================================================

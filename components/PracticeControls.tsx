@@ -55,13 +55,19 @@ export default function PracticeControls({
         </div>
 
         {/* Mode instructions */}
-        <p className="mt-3 text-sm text-gray-600">
+        <div className="mt-3 text-sm">
           {mode === "listen" ? (
-            <>Just listen and feel the rhythm. Tap your foot or nod along!</>
+            <div className="bg-blue-50 border border-blue-200 rounded p-3">
+              <p className="text-blue-800 font-semibold mb-1">Listen Mode:</p>
+              <p className="text-blue-700">The drums play automatically. Learn the pattern by watching and listening!</p>
+            </div>
           ) : (
-            <>Press the buttons below or use your keyboard to play along.</>
+            <div className="bg-purple-50 border border-purple-200 rounded p-3">
+              <p className="text-purple-800 font-semibold mb-1">Tap Along Mode:</p>
+              <p className="text-purple-700">You play the drums! Hit <strong>Play</strong>, then tap along. Complete 4 loops to get scored!</p>
+            </div>
           )}
-        </p>
+        </div>
       </div>
 
       {/* Tap buttons (visible in tap mode or on mobile) */}

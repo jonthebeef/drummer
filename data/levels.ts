@@ -17,13 +17,18 @@ export const levels: Level[] = [
     id: "level-1",
     levelNumber: 1,
     name: "Level 1: Your First Groove",
-    description: "Learn to feel the beat, count along, and play your first drum pattern!",
+    description: "Learn the steady beat, control each limb, and play your first real drum grooves!",
     exerciseIds: [
-      "level-1-ex-1",  // Listen and Feel the Beat
-      "level-1-ex-2",  // Count Along
-      "level-1-ex-3",  // Say 'Boots and Cats'
-      "level-1-ex-4",  // Play Along: Kick Drum
-      "level-1-ex-5",  // Play Along: All Together
+      "l1-01-counting",           // 1. Counting 1 2 3 4
+      "l1-02-hihat-quarters",     // 2. Hi hat on every beat
+      "l1-03-snare-quarters",     // 3. Snare on every beat
+      "l1-04-kick-quarters",      // 4. Kick on every beat
+      "l1-05-backbeat-intro",     // 5. Hi hat steady, snare on 3
+      "l1-06-downbeat-intro",     // 6. Hi hat steady, kick on 1
+      "l1-07-first-groove",       // 7. First groove: kick 1, snare 3
+      "l1-08-groove-variation",   // 8. Groove variation: kick 1 and 3
+      "l1-09-hihat-eighths",      // 9. Introducing the "and": hi hat eighth notes
+      "l1-10-and-kick-groove",    // 10. First groove with an "and" kick
     ],
   },
 ];

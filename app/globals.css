@@ -2,13 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  :root {
+    --font-outfit: 'Outfit', sans-serif;
+    --font-rubik-mono-one: 'Rubik Mono One', monospace;
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    /* Dark concert theme */
+    --background: #0a0a0a;
+    --foreground: #ffffff;
+
+    /* Bright stage colors */
+    --neon-green: #00ff88;
+    --neon-cyan: #00d9ff;
+    --neon-magenta: #ff0080;
+    --neon-red: #ff1744;
+    --neon-orange: #ff9100;
+    --neon-blue: #2979ff;
+    --neon-yellow: #ffd600;
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: var(--font-outfit);
+    font-size: 16px; /* Bigger base size for kids */
+  }
+
+  .font-logo {
+    font-family: var(--font-rubik-mono-one);
+  }
 }
