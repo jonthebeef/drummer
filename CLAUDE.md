@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Drummer is an interactive web app for teaching kids (ages 7-13) drum patterns. Built for Seb's 11th birthday (Dec 15, 2025) with the goal of teaching counting, grooves, and eventually fills.
+Drummer is an interactive web app for teaching kids (ages 7-13) drum patterns. Built for Seb's 12th birthday (Dec 15, 2025) with the goal of teaching counting, grooves, and eventually fills.
 
 **Key Design Principles:**
 - All musical content is data-driven (not hardcoded in JSX)
