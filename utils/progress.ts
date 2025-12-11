@@ -2,21 +2,32 @@
  * Progress Storage Utilities
  *
  * Handles saving and loading exercise progress to/from localStorage.
- * Simple key-value store: exerciseId -> ExerciseProgress
+ * Now supports per-account progress tracking.
  */
 
 import { ExerciseProgress, Stars } from "@/types";
-
-const STORAGE_KEY = "drummer-progress";
+import { getCurrentAccount } from "./accounts";
 
 /**
- * Get all progress from localStorage
+ * Get storage key for current account
+ */
+function getStorageKey(): string {
+  const currentAccount = getCurrentAccount();
+  if (!currentAccount) {
+    // No account signed in - use legacy key for backwards compatibility
+    return "drummer-progress";
+  }
+  return `drummer-progress-${currentAccount.id}`;
+}
+
+/**
+ * Get all progress from localStorage for current account
  */
 export function getAllProgress(): Record<string, ExerciseProgress> {
   if (typeof window === "undefined") return {};
 
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(getStorageKey());
     return stored ? JSON.parse(stored) : {};
   } catch (error) {
     console.error("Error loading progress:", error);
@@ -58,7 +69,7 @@ export function saveExerciseProgress(
   allProgress[exerciseId] = updated;
 
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allProgress));
+    localStorage.setItem(getStorageKey(), JSON.stringify(allProgress));
     console.log(`✓ Progress saved to localStorage for ${exerciseId}:`, updated);
   } catch (error) {
     console.error("Error saving progress:", error);
@@ -99,9 +110,9 @@ export function getExerciseStars(exerciseId: string): Stars {
 }
 
 /**
- * Clear all progress (for testing/reset)
+ * Clear all progress for current account (for testing/reset)
  */
 export function clearAllProgress(): void {
   if (typeof window === "undefined") return;
-  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(getStorageKey());
 }

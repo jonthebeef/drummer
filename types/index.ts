@@ -105,6 +105,22 @@ export interface Level {
 }
 
 // ============================================================================
+// ACCOUNT TYPES
+// ============================================================================
+
+/**
+ * User account for multi-user support
+ * Each account has its own progress stored separately
+ */
+export interface Account {
+  id: string;
+  name: string;
+  avatar: string;         // Emoji or image URL
+  createdAt: string;      // ISO date string
+  lastUsed: string;       // ISO date string
+}
+
+// ============================================================================
 // USER PROGRESS TYPES
 // ============================================================================
 

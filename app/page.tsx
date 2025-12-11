@@ -3,14 +3,46 @@
 /**
  * Home Page
  * Route: /
- * Simple landing page with navigation to levels and patterns
+ * Dashboard - only accessible when signed into an account
  */
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getCurrentAccount, signOut } from "@/utils/accounts";
 import { levels } from "@/data/levels";
 import { exercises } from "@/data/exercises";
+import type { Account } from "@/types";
 
 export default function Home() {
+  const router = useRouter();
+  const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const account = getCurrentAccount();
+    if (!account) {
+      // No account signed in - redirect to account selection
+      router.push("/accounts");
+    } else {
+      setCurrentAccount(account);
+      setLoading(false);
+    }
+  }, [router]);
+
+  const handleSwitchAccount = () => {
+    signOut();
+    router.push("/accounts");
+  };
+
+  if (loading || !currentAccount) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-2xl">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black">
       {/* Header navigation */}
@@ -27,7 +59,17 @@ export default function Home() {
               DRUMMER.
             </Link>
 
-            <nav className="flex gap-2">
+            <nav className="flex gap-2 items-center">
+              {/* Current Account Badge */}
+              <button
+                onClick={handleSwitchAccount}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all text-lg bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-[#00ff88] border-2 border-zinc-700 hover:border-[#00ff88]"
+                title="Switch Account"
+              >
+                <span className="text-2xl">{currentAccount.avatar}</span>
+                <span>{currentAccount.name}</span>
+              </button>
+
               <Link
                 href="/"
                 className="px-4 py-2 rounded-lg font-bold transition-all text-lg bg-[#00ff88] text-black"
@@ -56,12 +98,12 @@ export default function Home() {
         <div className="space-y-8">
           {/* Welcome card */}
           <div className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black rounded-2xl shadow-2xl p-12 text-center border-2 border-zinc-800">
-            <div className="text-7xl mb-6 animate-pulse">🥁</div>
+            <div className="text-7xl mb-6">{currentAccount.avatar}</div>
             <h1 className="text-5xl font-logo text-[#00ff88] mb-4 tracking-wide">
-              DRUMMER
+              Welcome Back, {currentAccount.name}!
             </h1>
             <p className="text-2xl text-zinc-300 mb-10 font-bold">
-              Rock out one beat at a time
+              Ready to rock out?
             </p>
 
             <Link
