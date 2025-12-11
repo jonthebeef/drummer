@@ -59,6 +59,7 @@ export function saveExerciseProgress(
 
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allProgress));
+    console.log(`✓ Progress saved to localStorage for ${exerciseId}:`, updated);
   } catch (error) {
     console.error("Error saving progress:", error);
   }
@@ -82,8 +83,11 @@ export function isExerciseUnlocked(
   // Check if previous exercise has been completed
   const previousExerciseId = allExerciseIds[index - 1];
   const previousProgress = getExerciseProgress(previousExerciseId);
+  const isUnlocked = previousProgress !== null && previousProgress.stars >= 1;
 
-  return previousProgress !== null && previousProgress.stars >= 1;
+  console.log(`Checking if ${exerciseId} is unlocked: previous=${previousExerciseId}, progress=`, previousProgress, `unlocked=${isUnlocked}`);
+
+  return isUnlocked;
 }
 
 /**

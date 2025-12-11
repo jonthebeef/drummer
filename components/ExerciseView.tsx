@@ -182,7 +182,11 @@ export default function ExerciseView({
   const handleContinue = useCallback(() => {
     const result = getScoringResult();
     if (result && result.stars > 0) {
+      console.log(`Saving progress for ${exercise.id}: ${result.stars} stars, ${result.accuracy}% accuracy`);
       saveExerciseProgress(exercise.id, result.stars, result.accuracy);
+      console.log(`Progress saved successfully`);
+    } else {
+      console.warn(`No progress to save - result:`, result);
     }
     if (onComplete) {
       onComplete();
@@ -406,12 +410,22 @@ export default function ExerciseView({
                   >
                     🔄 Try Again
                   </button>
-                  <button
-                    onClick={handleContinue}
-                    className="bg-[#00ff88] hover:bg-[#00d9ff] text-black font-bold text-2xl px-16 py-8 rounded-2xl transition-all shadow-2xl hover:scale-105 border-4 border-[#00ff88] hover:border-[#00d9ff]"
-                  >
-                    ➡️ Next Lesson
-                  </button>
+
+                  {result.stars >= 1 ? (
+                    <button
+                      onClick={handleContinue}
+                      className="bg-[#00ff88] hover:bg-[#00d9ff] text-black font-bold text-2xl px-16 py-8 rounded-2xl transition-all shadow-2xl hover:scale-105 border-4 border-[#00ff88] hover:border-[#00d9ff]"
+                    >
+                      ➡️ Next Lesson
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onComplete && onComplete()}
+                      className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold text-2xl px-16 py-8 rounded-2xl transition-all shadow-2xl hover:scale-105 border-4 border-zinc-800 hover:border-zinc-700"
+                    >
+                      ⬅️ Back to Level Map
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

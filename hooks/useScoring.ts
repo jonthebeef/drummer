@@ -38,12 +38,12 @@ const TIMING_WINDOW_MS = 150;
 
 /**
  * Calculate stars from accuracy percentage
- * Stricter thresholds for real achievement
+ * Kid-friendly thresholds - encouraging but still challenging
  */
 function calculateStars(accuracy: number): Stars {
-  if (accuracy >= 95) return 3;  // ⭐⭐⭐ Excellent!
-  if (accuracy >= 80) return 2;  // ⭐⭐ Great!
-  if (accuracy >= 60) return 1;  // ⭐ Good try!
+  if (accuracy >= 90) return 3;  // ⭐⭐⭐ Excellent!
+  if (accuracy >= 70) return 2;  // ⭐⭐ Great!
+  if (accuracy >= 50) return 1;  // ⭐ Good try!
   return 0;  // Keep practicing
 }
 
