@@ -119,89 +119,103 @@ export default function ExerciseView({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Exercise header */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 shadow-lg">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-semibold">
-            Level {exercise.level}
-          </span>
-          <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-semibold capitalize">
-            {exercise.type}
-          </span>
-        </div>
-        <h1 className="text-3xl font-bold">{exercise.title}</h1>
-      </div>
-
-      {/* Instructions */}
-      <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
-        <h2 className="text-lg font-bold text-gray-800 mb-3">📖 Instructions</h2>
-        <div
-          className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(exercise.instructions) }}
-        />
-      </div>
-
-      {/* Counting guide */}
-      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 text-center">
-        <div className="text-sm text-blue-700 font-semibold mb-1">Count along:</div>
-        <div className="text-2xl font-mono font-bold text-blue-900">
-          {exercise.counting}
-        </div>
-      </div>
-
-      {/* Drum Grid */}
-      <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
-        <DrumGrid
-          pattern={pattern}
-          currentStep={isPlaying ? currentStep : undefined}
-          userHit={practiceMode === "tap" ? currentHit : null}
-          showCounting={true}
-        />
-      </div>
-
-      {/* Transport Controls */}
-      <TransportControls
-        isPlaying={isPlaying}
-        bpm={bpm}
-        defaultBpm={exercise.tempoBpm}
-        onPlay={handlePlay}
-        onPause={pause}
-        onStop={stop}
-        onBpmChange={setBpm}
-        metronomeEnabled={metronomeEnabled}
-        onMetronomeToggle={setMetronomeEnabled}
-      />
-
-      {/* Practice Controls */}
-      <PracticeControls
-        mode={practiceMode}
-        onModeChange={setPracticeMode}
-        onDrumHit={hitDrum}
-      />
-
-      {/* Action buttons */}
-      <div className="flex gap-3 justify-end">
-        {!isCompleted ? (
-          <button
-            onClick={handleMarkComplete}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-          >
-            ✓ Mark as Done
-          </button>
-        ) : (
-          <div className="flex items-center gap-3">
-            <span className="text-green-600 font-semibold">✓ Completed!</span>
-            {onNext && (
-              <button
-                onClick={onNext}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-              >
-                Next Exercise →
-              </button>
-            )}
+    <div className="space-y-0">
+      {/* ============ PLAYER SECTION (Theater Mode) ============ */}
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-b-4 border-blue-500">
+        {/* Exercise header */}
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-semibold">
+                Level {exercise.level}
+              </span>
+              <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-semibold capitalize">
+                {exercise.type}
+              </span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold">{exercise.title}</h1>
           </div>
-        )}
+        </div>
+
+        {/* Player controls area */}
+        <div className="max-w-6xl mx-auto px-6 py-6 space-y-6">
+          {/* Drum Grid */}
+          <div className="bg-white rounded-lg shadow-xl p-6">
+            <DrumGrid
+              pattern={pattern}
+              currentStep={isPlaying ? currentStep : undefined}
+              userHit={practiceMode === "tap" ? currentHit : null}
+              showCounting={true}
+            />
+          </div>
+
+          {/* Controls row */}
+          <div className="grid lg:grid-cols-2 gap-4">
+            {/* Transport Controls */}
+            <TransportControls
+              isPlaying={isPlaying}
+              bpm={bpm}
+              defaultBpm={exercise.tempoBpm}
+              onPlay={handlePlay}
+              onPause={pause}
+              onStop={stop}
+              onBpmChange={setBpm}
+              metronomeEnabled={metronomeEnabled}
+              onMetronomeToggle={setMetronomeEnabled}
+            />
+
+            {/* Practice Controls */}
+            <PracticeControls
+              mode={practiceMode}
+              onModeChange={setPracticeMode}
+              onDrumHit={hitDrum}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ============ CONTENT SECTION ============ */}
+      <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+        {/* Counting guide */}
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 text-center">
+          <div className="text-sm text-blue-700 font-semibold mb-1">Count along:</div>
+          <div className="text-2xl font-mono font-bold text-blue-900">
+            {exercise.counting}
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="bg-white rounded-lg border-2 border-gray-200 p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-gray-800 mb-3">📖 Instructions</h2>
+          <div
+            className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(exercise.instructions) }}
+          />
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-3 justify-end">
+          {!isCompleted ? (
+            <button
+              onClick={handleMarkComplete}
+              className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg"
+            >
+              ✓ Mark as Done
+            </button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <span className="text-green-600 font-semibold">✓ Completed!</span>
+              {onNext && (
+                <button
+                  onClick={onNext}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg"
+                >
+                  Next Exercise →
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

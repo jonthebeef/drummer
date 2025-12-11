@@ -94,7 +94,7 @@ export default function Home() {
       </header>
 
       {/* Main content */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className={currentView === "home" ? "max-w-6xl mx-auto px-4 py-8" : ""}>
         {/* HOME VIEW */}
         {currentView === "home" && (
           <div className="space-y-8">
@@ -152,22 +152,24 @@ export default function Home() {
         {currentView === "session" && currentExercise && (
           <div>
             {/* Progress indicator */}
-            <div className="mb-6 bg-white rounded-lg border-2 border-gray-200 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">
-                  Session Progress
-                </span>
-                <span className="text-sm text-gray-600">
-                  Exercise {currentExerciseIndex + 1} of {sessionExercises.length}
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500"
-                  style={{
-                    width: `${((currentExerciseIndex + 1) / sessionExercises.length) * 100}%`,
-                  }}
-                />
+            <div className="bg-white border-b-2 border-gray-200 px-6 py-4">
+              <div className="max-w-6xl mx-auto">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Session Progress
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    Exercise {currentExerciseIndex + 1} of {sessionExercises.length}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${((currentExerciseIndex + 1) / sessionExercises.length) * 100}%`,
+                    }}
+                  />
+                </div>
               </div>
             </div>
 

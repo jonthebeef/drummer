@@ -77,77 +77,35 @@ export default function PatternSelector() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg p-6 shadow-lg">
-        <h1 className="text-3xl font-bold">🎵 Pattern Browser</h1>
-        <p className="text-blue-100 mt-2">
-          Explore different drum patterns and hear how they sound.
-        </p>
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Pattern list */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
-            <h2 className="font-bold text-gray-800 mb-3">Patterns</h2>
-            <div className="space-y-2">
-              {patterns.map((pattern) => (
-                <button
-                  key={pattern.id}
-                  onClick={() => {
-                    stop();
-                    setSelectedPattern(pattern);
-                  }}
-                  className={`
-                    w-full text-left p-3 rounded-lg border-2 transition-all
-                    ${selectedPattern.id === pattern.id
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                    }
-                  `}
-                >
-                  <div className="font-semibold text-gray-800 text-sm mb-1">
-                    {pattern.name}
-                  </div>
-                  <div
-                    className={`
-                      inline-block text-xs px-2 py-0.5 rounded border font-semibold capitalize
-                      ${getDifficultyColor(pattern.difficulty)}
-                    `}
-                  >
-                    {pattern.difficulty}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Pattern details and player */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Pattern info */}
-          <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
-            <div className="flex items-start justify-between mb-3">
-              <h2 className="text-2xl font-bold text-gray-800">
-                {selectedPattern.name}
-              </h2>
+    <div className="space-y-0">
+      {/* ============ PLAYER SECTION (Theater Mode) ============ */}
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-b-4 border-cyan-500">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold">🎵 {selectedPattern.name}</h1>
+                <p className="text-blue-100 mt-1 text-sm">
+                  {selectedPattern.description}
+                </p>
+              </div>
               <span
                 className={`
-                  px-3 py-1 rounded-full border-2 text-sm font-semibold capitalize
-                  ${getDifficultyColor(selectedPattern.difficulty)}
+                  hidden sm:inline-block px-3 py-1 rounded-full border-2 border-white border-opacity-30 text-sm font-semibold capitalize
+                  bg-white bg-opacity-20
                 `}
               >
                 {selectedPattern.difficulty}
               </span>
             </div>
-            <p className="text-gray-600 leading-relaxed">
-              {selectedPattern.description}
-            </p>
           </div>
+        </div>
 
-          {/* Drum grid */}
-          <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
+        {/* Player controls area */}
+        <div className="max-w-6xl mx-auto px-6 py-6 space-y-6">
+          {/* Drum Grid */}
+          <div className="bg-white rounded-lg shadow-xl p-6">
             <DrumGrid
               pattern={selectedPattern}
               currentStep={isPlaying ? currentStep : undefined}
@@ -155,8 +113,8 @@ export default function PatternSelector() {
             />
           </div>
 
-          {/* Simple playback controls */}
-          <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
+          {/* Playback controls */}
+          <div className="bg-white rounded-lg border-2 border-gray-200 p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               {!isPlaying ? (
                 <button
@@ -233,6 +191,43 @@ export default function PatternSelector() {
                 </div>
               </label>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ============ CONTENT SECTION ============ */}
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="bg-white rounded-lg border-2 border-gray-200 p-6 shadow-sm">
+          <h2 className="font-bold text-gray-800 mb-4 text-lg">Select a Pattern</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {patterns.map((pattern) => (
+              <button
+                key={pattern.id}
+                onClick={() => {
+                  stop();
+                  setSelectedPattern(pattern);
+                }}
+                className={`
+                  text-left p-4 rounded-lg border-2 transition-all
+                  ${selectedPattern.id === pattern.id
+                    ? "border-blue-500 bg-blue-50 shadow-md"
+                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                  }
+                `}
+              >
+                <div className="font-semibold text-gray-800 mb-2">
+                  {pattern.name}
+                </div>
+                <div
+                  className={`
+                    inline-block text-xs px-2 py-1 rounded border font-semibold capitalize
+                    ${getDifficultyColor(pattern.difficulty)}
+                  `}
+                >
+                  {pattern.difficulty}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
