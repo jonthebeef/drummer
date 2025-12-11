@@ -32,7 +32,7 @@ export default function AccountsPage() {
 
   const handleSelectAccount = (accountId: string) => {
     signInToAccount(accountId);
-    router.push("/");
+    router.push("/levels/1");
   };
 
   const handleCreateAccount = () => {
@@ -43,7 +43,7 @@ export default function AccountsPage() {
 
     const account = createAccount(newName, selectedAvatar);
     signInToAccount(account.id);
-    router.push("/");
+    router.push("/levels/1");
   };
 
   return (
