@@ -17,6 +17,7 @@ interface DrumGridProps {
   currentStep?: number;      // 0-indexed (0-7 for 8 steps), highlights this column
   userHit?: DrumType | null; // Which drum the user just hit (for visual feedback)
   showCounting?: boolean;    // Show counting labels above (1 & 2 & 3 & 4 &)
+  showKeyLegend?: boolean;   // Show keyboard shortcut legend below grid
   stepFeedback?: (step: number) => "correct" | "incorrect" | null; // Scoring feedback per step
 }
 
@@ -25,6 +26,7 @@ export default function DrumGrid({
   currentStep,
   userHit,
   showCounting = true,
+  showKeyLegend = true,
   stepFeedback,
 }: DrumGridProps) {
   // Get the count label for a step (1, &, 2, &, etc.)
@@ -132,18 +134,20 @@ export default function DrumGrid({
       </div>
 
       {/* Key legend */}
-      <div className="mt-6 text-xl text-zinc-300 text-center font-bold">
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#2979ff] text-[#2979ff] shadow-lg">F</span>
-          <span>= Kick</span>
-          <span className="mx-2 text-zinc-700">•</span>
-          <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#ff1744] text-[#ff1744] shadow-lg">J</span>
-          <span>= Snare</span>
-          <span className="mx-2 text-zinc-700">•</span>
-          <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#00d9ff] text-[#00d9ff] shadow-lg">Space</span>
-          <span>= Hi Hat</span>
+      {showKeyLegend && (
+        <div className="mt-6 text-xl text-zinc-300 text-center font-bold">
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#2979ff] text-[#2979ff] shadow-lg">F</span>
+            <span>= Kick</span>
+            <span className="mx-2 text-zinc-700">•</span>
+            <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#ff1744] text-[#ff1744] shadow-lg">J</span>
+            <span>= Snare</span>
+            <span className="mx-2 text-zinc-700">•</span>
+            <span className="font-mono bg-zinc-900 px-4 py-2 rounded-lg border-2 border-[#00d9ff] text-[#00d9ff] shadow-lg">Space</span>
+            <span>= Hi Hat</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

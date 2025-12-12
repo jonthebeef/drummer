@@ -49,13 +49,48 @@ export default function LevelMap({
   const exerciseIds = exercises.map(e => e.id);
 
   return (
-    <div className="min-h-screen bg-black p-6">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-black py-10 pb-16">
+      <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-white mb-8">
-          <h1 className="text-5xl font-logo text-[#00ff88] mb-3 tracking-wide">{levelName.toUpperCase()}</h1>
+          <h1 className="text-5xl font-logo mb-4 tracking-wide">
+            <span className="text-[#00ff88]">{levelName.split(":")[0].toUpperCase()}:</span>
+            <br />
+            <span className="text-white">{levelName.split(":")[1]?.trim().toUpperCase()}</span>
+          </h1>
           <p className="text-zinc-300 text-xl font-bold">{levelDescription}</p>
         </div>
+
+        {/* Progress summary - only show if user has completed at least one exercise */}
+        {exercises.filter(e => getExerciseStars(e.id) > 0).length > 0 && (
+          <div className="mb-10 bg-gradient-to-r from-zinc-900 to-zinc-950 rounded-xl p-4 border border-[#ff0080]/50">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">
+                  {exercises.filter(e => getExerciseStars(e.id) >= 3).length >= exercises.length
+                    ? "🏆"
+                    : "🥁"}
+                </span>
+                <div>
+                  <p className="text-[#ff0080] font-bold text-lg">Your Progress</p>
+                  <p className="text-zinc-400 text-sm">
+                    {exercises.filter(e => getExerciseStars(e.id) > 0).length} of {exercises.length} lessons rocked!
+                  </p>
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="w-full bg-zinc-950 rounded-full h-4 border border-zinc-800">
+                  <div
+                    className="bg-gradient-to-r from-[#00ff88] via-[#00d9ff] to-[#ff9100] h-4 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${(exercises.filter(e => getExerciseStars(e.id) > 0).length / exercises.length) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* How to practice guide */}
         <div className="mb-8 text-zinc-400 text-lg">
@@ -63,7 +98,7 @@ export default function LevelMap({
         </div>
 
         {/* Lesson grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {exercises.map((exercise, index) => {
             const stars = getExerciseStars(exercise.id);
             const isUnlocked = isExerciseUnlocked(exercise.id, exerciseIds);
@@ -127,33 +162,6 @@ export default function LevelMap({
               </button>
             );
           })}
-        </div>
-
-        {/* Progress summary */}
-        <div className="mt-8 bg-gradient-to-br from-zinc-900 to-black rounded-2xl p-8 shadow-2xl border-2 border-[#ff0080]">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-[#ff0080] mb-2">Your Progress</h2>
-              <p className="text-zinc-300 text-xl font-semibold">
-                {exercises.filter(e => getExerciseStars(e.id) > 0).length} of {exercises.length} lessons rocked!
-              </p>
-            </div>
-            <div className="text-6xl">
-              {exercises.filter(e => getExerciseStars(e.id) >= 3).length >= exercises.length
-                ? "🏆"
-                : "🥁"}
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div className="mt-6 w-full bg-zinc-950 rounded-full h-6 border-2 border-zinc-800">
-            <div
-              className="bg-gradient-to-r from-[#00ff88] via-[#00d9ff] to-[#ff9100] h-6 rounded-full transition-all duration-500"
-              style={{
-                width: `${(exercises.filter(e => getExerciseStars(e.id) > 0).length / exercises.length) * 100}%`,
-              }}
-            />
-          </div>
         </div>
       </div>
     </div>

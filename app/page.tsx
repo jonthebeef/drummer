@@ -159,6 +159,7 @@ export default function LandingPage() {
               pattern={DEMO_PATTERN}
               currentStep={currentStep}
               showCounting={true}
+              showKeyLegend={false}
             />
 
             {/* Play/Stop button */}

@@ -113,6 +113,26 @@ export default function AccountsPage() {
               </p>
             </div>
 
+            {/* Name Input */}
+            <div className="bg-zinc-900 rounded-2xl p-8 border-2 border-[#ff9100]">
+              <h3 className="text-2xl font-bold text-[#ff9100] mb-6 text-center">
+                What's Your Name?
+              </h3>
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Enter your name..."
+                maxLength={20}
+                className="w-full text-3xl font-bold text-center px-6 py-4 rounded-xl bg-black text-white border-4 border-zinc-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && newName.trim()) {
+                    handleCreateAccount();
+                  }
+                }}
+              />
+            </div>
+
             {/* Avatar Selection */}
             <div className="bg-zinc-900 rounded-2xl p-8 border-2 border-[#00d9ff]">
               <h3 className="text-2xl font-bold text-[#00d9ff] mb-6 text-center">
@@ -135,26 +155,6 @@ export default function AccountsPage() {
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* Name Input */}
-            <div className="bg-zinc-900 rounded-2xl p-8 border-2 border-[#ff9100]">
-              <h3 className="text-2xl font-bold text-[#ff9100] mb-6 text-center">
-                What's Your Name?
-              </h3>
-              <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                placeholder="Enter your name..."
-                maxLength={20}
-                className="w-full text-3xl font-bold text-center px-6 py-4 rounded-xl bg-black text-white border-4 border-zinc-700 focus:border-[#00ff88] focus:outline-none transition-colors"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && newName.trim()) {
-                    handleCreateAccount();
-                  }
-                }}
-              />
             </div>
 
             {/* Action Buttons */}
