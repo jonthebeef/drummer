@@ -141,8 +141,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Drum Grid Demo Section */}
-      <section className="py-16 bg-gradient-to-b from-black via-zinc-950 to-black">
+      {/* Drum Grid Demo Section - Hidden on mobile, grid not responsive yet */}
+      <section className="hidden md:block py-16 bg-gradient-to-b from-black via-zinc-950 to-black">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-logo text-white mb-4">
