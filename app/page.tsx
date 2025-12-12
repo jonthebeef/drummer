@@ -189,14 +189,15 @@ export default function LandingPage() {
 
       {/* How It Works - Visual Flow */}
       <section className="py-16 bg-black">
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-4xl md:text-5xl font-logo text-center text-white mb-16">
             IT'S <span className="text-[#ff9100]">EASY</span>
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-6 md:gap-4">
+          {/* Desktop: horizontal layout */}
+          <div className="hidden md:flex items-center justify-center gap-4">
             {/* Step 1: Watch */}
-            <div className="text-center p-8">
+            <div className="text-center p-6 flex-1">
               <div className="text-8xl mb-6">👀</div>
               <div className="bg-[#00d9ff] text-black text-3xl font-bold py-3 px-6 rounded-xl inline-block mb-4">
                 WATCH
@@ -206,15 +207,11 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Arrow on desktop */}
-            <div className="hidden md:flex items-center justify-center">
-              <div className="text-6xl text-[#ff9100]">→</div>
-            </div>
-            {/* Arrow on mobile */}
-            <div className="md:hidden text-center text-4xl text-[#ff9100]">↓</div>
+            {/* Arrow 1 */}
+            <div className="text-6xl text-[#ff9100] flex-shrink-0">→</div>
 
             {/* Step 2: Play */}
-            <div className="text-center p-8 md:col-start-2 md:row-start-1">
+            <div className="text-center p-6 flex-1">
               <div className="text-8xl mb-6">🥁</div>
               <div className="bg-[#ff9100] text-black text-3xl font-bold py-3 px-6 rounded-xl inline-block mb-4">
                 PLAY
@@ -224,19 +221,57 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Arrow on desktop */}
-            <div className="hidden md:flex items-center justify-center md:col-start-2 md:row-start-1">
-              {/* This is repositioned via grid */}
-            </div>
+            {/* Arrow 2 */}
+            <div className="text-6xl text-[#ff9100] flex-shrink-0">→</div>
 
             {/* Step 3: Win */}
-            <div className="text-center p-8 md:col-start-3">
+            <div className="text-center p-6 flex-1">
               <div className="text-8xl mb-6">⭐</div>
               <div className="bg-[#00ff88] text-black text-3xl font-bold py-3 px-6 rounded-xl inline-block mb-4">
                 WIN
               </div>
               <p className="text-xl text-zinc-300">
                 Earn stars.<br />Unlock more levels!
+              </p>
+            </div>
+          </div>
+
+          {/* Mobile: vertical layout */}
+          <div className="md:hidden flex flex-col items-center gap-4">
+            {/* Step 1: Watch */}
+            <div className="text-center p-6">
+              <div className="text-7xl mb-4">👀</div>
+              <div className="bg-[#00d9ff] text-black text-2xl font-bold py-3 px-6 rounded-xl inline-block mb-3">
+                WATCH
+              </div>
+              <p className="text-lg text-zinc-300">
+                See the pattern play. Learn the beat.
+              </p>
+            </div>
+
+            <div className="text-4xl text-[#ff9100]">↓</div>
+
+            {/* Step 2: Play */}
+            <div className="text-center p-6">
+              <div className="text-7xl mb-4">🥁</div>
+              <div className="bg-[#ff9100] text-black text-2xl font-bold py-3 px-6 rounded-xl inline-block mb-3">
+                PLAY
+              </div>
+              <p className="text-lg text-zinc-300">
+                Copy the beat. Tap the drums!
+              </p>
+            </div>
+
+            <div className="text-4xl text-[#ff9100]">↓</div>
+
+            {/* Step 3: Win */}
+            <div className="text-center p-6">
+              <div className="text-7xl mb-4">⭐</div>
+              <div className="bg-[#00ff88] text-black text-2xl font-bold py-3 px-6 rounded-xl inline-block mb-3">
+                WIN
+              </div>
+              <p className="text-lg text-zinc-300">
+                Earn stars. Unlock more levels!
               </p>
             </div>
           </div>
