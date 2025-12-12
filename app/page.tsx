@@ -9,6 +9,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import DrumGrid from "@/components/DrumGrid";
+import HowItWorksModal from "@/components/HowItWorksModal";
 import { Pattern } from "@/types";
 import { playDrum, playMetronomeClick, resumeAudioContext } from "@/utils/drumSynth";
 
@@ -37,6 +38,7 @@ export default function LandingPage() {
   const [currentStep, setCurrentStep] = useState<number | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   // Auto-play the demo pattern
   const startDemo = useCallback(() => {
@@ -136,6 +138,14 @@ export default function LandingPage() {
               >
                 START PLAYING
               </Link>
+              <div className="mt-4">
+                <button
+                  onClick={() => setShowHowItWorks(true)}
+                  className="text-zinc-400 hover:text-[#00d9ff] text-lg underline underline-offset-4 transition-colors"
+                >
+                  How does this work? (for parents)
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -362,6 +372,12 @@ export default function LandingPage() {
           <p className="text-zinc-500 text-lg">Made for young drummers everywhere</p>
         </div>
       </footer>
+
+      {/* How It Works Modal */}
+      <HowItWorksModal
+        isOpen={showHowItWorks}
+        onClose={() => setShowHowItWorks(false)}
+      />
     </div>
   );
 }
