@@ -114,7 +114,7 @@ export default function LandingPage() {
             backgroundPosition: "center 40%"
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/80 to-black"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black"></div>
         </div>
 
         {/* Content */}
@@ -125,8 +125,8 @@ export default function LandingPage() {
               <span className="text-[#00ff88]">LIKE A ROCKSTAR.</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-zinc-300 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
-              Watch. Play. Earn stars. It's that easy.
+            <p className="text-xl md:text-2xl text-white max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-lg">
+              Interactive drum lessons for kids ages 6-13. Master timing, grooves, and fills one beat at a time.
             </p>
 
             <div className="pt-4">
