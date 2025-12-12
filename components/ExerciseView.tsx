@@ -42,6 +42,7 @@ export default function ExerciseView({
   const [lessonState, setLessonState] = useState<LessonState>("READY");
   const [countdown, setCountdown] = useState(3);
   const [listenLoops, setListenLoops] = useState(0);
+  const [metronomeEnabled, setMetronomeEnabled] = useState(true);
 
   // Get the pattern or throw error if not found
   if (!pattern) {
@@ -54,8 +55,8 @@ export default function ExerciseView({
 
   // Step change callback - plays drums and metronome
   const handleStepChange = useCallback((step: number) => {
-    // Always play metronome on quarter notes
-    if (step % 2 === 0) {
+    // Play metronome on quarter notes if enabled
+    if (metronomeEnabled && step % 2 === 0) {
       const isAccent = step === 0; // Accent beat 1
       playMetronomeClick(isAccent);
     }
@@ -69,7 +70,7 @@ export default function ExerciseView({
         playDrum(drum);
       });
     }
-  }, [pattern, lessonState]);
+  }, [pattern, lessonState, metronomeEnabled]);
 
   // Sequencer hook for timing
   const {
@@ -111,6 +112,25 @@ export default function ExerciseView({
     }
   }, [currentHit, lessonState, recordHit]);
 
+  // Keyboard shortcuts: Arrow keys for tempo, 'M' for metronome
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setBpm(prev => Math.min(160, prev + 5));
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setBpm(prev => Math.max(40, prev - 5));
+      } else if (event.key === "m" || event.key === "M") {
+        event.preventDefault();
+        setMetronomeEnabled(prev => !prev);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setBpm]);
+
   // Track loops in LISTEN mode
   const lastStepRef = useRef(-1);
   useEffect(() => {
@@ -120,8 +140,8 @@ export default function ExerciseView({
         const newLoops = listenLoops + 1;
         setListenLoops(newLoops);
 
-        // After 2 listen loops, move to practice
-        if (newLoops >= 2) {
+        // After 4 listen loops, move to practice
+        if (newLoops >= 4) {
           pause();
           setLessonState("COUNTDOWN_PRACTICE");
         }
@@ -208,6 +228,17 @@ export default function ExerciseView({
               <span className="bg-[#ff9100] text-black px-4 py-2 rounded-full text-lg font-bold uppercase">
                 {exercise.type}
               </span>
+              <button
+                onClick={() => setMetronomeEnabled(!metronomeEnabled)}
+                className={`px-4 py-2 rounded-full text-lg font-bold transition-all ${
+                  metronomeEnabled
+                    ? "bg-[#00ff88] text-black"
+                    : "bg-zinc-700 text-zinc-400"
+                }`}
+                title={metronomeEnabled ? "Metronome ON (Press M to toggle)" : "Metronome OFF (Press M to toggle)"}
+              >
+                🎵 {metronomeEnabled ? "ON" : "OFF"}
+              </button>
             </div>
           </div>
         </div>
@@ -280,7 +311,7 @@ export default function ExerciseView({
             {/* Banner */}
             <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black text-center py-6 rounded-2xl shadow-2xl border-4 border-[#00d9ff]">
               <div className="text-4xl font-bold mb-2">👂 WATCH & LISTEN</div>
-              <div className="text-2xl font-bold">Loop {listenLoops + 1} of 2</div>
+              <div className="text-2xl font-bold">Loop {listenLoops + 1} of 4</div>
             </div>
 
             {/* Drum Grid */}

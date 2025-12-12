@@ -27,7 +27,7 @@ export const patterns: Pattern[] = [
     name: "Counting 1 2 3 4",
     difficulty: "easy",
     description: "Just tap along with the beat. Feel the steady pulse!",
-    defaultTempoBpm: 60,
+    defaultTempoBpm: 50,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -48,7 +48,7 @@ export const patterns: Pattern[] = [
     name: "Hi Hat on Every Beat",
     difficulty: "easy",
     description: "Play the hi hat four times - 1, 2, 3, 4. Keep it steady!",
-    defaultTempoBpm: 65,
+    defaultTempoBpm: 55,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -69,7 +69,7 @@ export const patterns: Pattern[] = [
     name: "Snare on Every Beat",
     difficulty: "easy",
     description: "Now try the snare. Hit it four times - 1, 2, 3, 4.",
-    defaultTempoBpm: 65,
+    defaultTempoBpm: 55,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -90,7 +90,7 @@ export const patterns: Pattern[] = [
     name: "Kick on Every Beat",
     difficulty: "easy",
     description: "Time for your foot! Kick drum on 1, 2, 3, 4.",
-    defaultTempoBpm: 65,
+    defaultTempoBpm: 55,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -111,7 +111,7 @@ export const patterns: Pattern[] = [
     name: "Hi Hat Steady, Snare on 3",
     difficulty: "easy",
     description: "Hi hat goes 1, 2, 3, 4. Snare only on beat 3. This is the backbeat!",
-    defaultTempoBpm: 70,
+    defaultTempoBpm: 60,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -132,7 +132,7 @@ export const patterns: Pattern[] = [
     name: "Hi Hat Steady, Kick on 1",
     difficulty: "easy",
     description: "Hi hat on 1, 2, 3, 4. Kick only on beat 1. Feel that downbeat!",
-    defaultTempoBpm: 70,
+    defaultTempoBpm: 60,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -153,7 +153,7 @@ export const patterns: Pattern[] = [
     name: "First Groove: Kick 1, Snare 3",
     difficulty: "easy",
     description: "Your first full groove! Hi hat steady, kick on 1, snare on 3.",
-    defaultTempoBpm: 70,
+    defaultTempoBpm: 60,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -174,7 +174,7 @@ export const patterns: Pattern[] = [
     name: "Groove Variation: Kick 1 and 3",
     difficulty: "easy",
     description: "Same as before, but now kick on beat 1 AND beat 3 with the snare.",
-    defaultTempoBpm: 75,
+    defaultTempoBpm: 65,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -195,7 +195,7 @@ export const patterns: Pattern[] = [
     name: "Introducing the \"And\": Hi Hat Eighth Notes",
     difficulty: "easy",
     description: "Now the hi hat plays twice as fast: 1 and 2 and 3 and 4 and!",
-    defaultTempoBpm: 70,
+    defaultTempoBpm: 60,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [
@@ -216,7 +216,7 @@ export const patterns: Pattern[] = [
     name: "First Groove with an \"And\" Kick",
     difficulty: "easy",
     description: "Hi hat eighth notes, kick on 1 and the 'and' of 3, snare on 3. A real rock beat!",
-    defaultTempoBpm: 75,
+    defaultTempoBpm: 70,
     timeSignature: "4/4",
     subdivision: "eighth",
     steps: [

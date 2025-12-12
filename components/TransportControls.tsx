@@ -88,6 +88,24 @@ export default function TransportControls({
           )}
         </div>
 
+        {/* Tempo +/- buttons */}
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={() => onBpmChange(Math.max(minBpm, bpm - 5))}
+            disabled={bpm <= minBpm}
+            className="flex-1 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors disabled:cursor-not-allowed"
+          >
+            − Slower
+          </button>
+          <button
+            onClick={() => onBpmChange(Math.min(maxBpm, bpm + 5))}
+            disabled={bpm >= maxBpm}
+            className="flex-1 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors disabled:cursor-not-allowed"
+          >
+            Faster +
+          </button>
+        </div>
+
         <input
           type="range"
           min={minBpm}
