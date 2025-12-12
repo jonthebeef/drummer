@@ -14,6 +14,7 @@ import { useDrumInput } from "@/hooks/useDrumInput";
 import { useScoring } from "@/hooks/useScoring";
 import { playDrum, playMetronomeClick, resumeAudioContext } from "@/utils/drumSynth";
 import { saveExerciseProgress } from "@/utils/progress";
+import { trackTempoChanged, trackMetronomeToggled, trackListenPhaseStarted, trackPracticePhaseStarted } from "@/utils/analytics";
 import DrumGrid from "./DrumGrid";
 
 interface ExerciseViewProps {
@@ -117,19 +118,26 @@ export default function ExerciseView({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "ArrowUp") {
         event.preventDefault();
-        setBpm(Math.min(160, bpm + 5));
+        const newBpm = Math.min(160, bpm + 5);
+        setBpm(newBpm);
+        trackTempoChanged(exercise.id, bpm, newBpm);
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
-        setBpm(Math.max(40, bpm - 5));
+        const newBpm = Math.max(40, bpm - 5);
+        setBpm(newBpm);
+        trackTempoChanged(exercise.id, bpm, newBpm);
       } else if (event.key === "m" || event.key === "M") {
         event.preventDefault();
-        setMetronomeEnabled(prev => !prev);
+        setMetronomeEnabled(prev => {
+          trackMetronomeToggled(!prev, exercise.id);
+          return !prev;
+        });
       }
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setBpm, bpm]);
+  }, [setBpm, bpm, exercise.id]);
 
   // Track loops in LISTEN mode
   const lastStepRef = useRef(-1);
@@ -171,10 +179,12 @@ export default function ExerciseView({
         // Countdown finished
         if (lessonState === "COUNTDOWN_LISTEN") {
           setLessonState("LISTEN");
+          trackListenPhaseStarted(exercise.id);
           resumeAudioContext();
           play();
         } else if (lessonState === "COUNTDOWN_PRACTICE") {
           setLessonState("PRACTICE");
+          trackPracticePhaseStarted(exercise.id);
           resetScoring();
           resumeAudioContext();
           play();
@@ -229,7 +239,10 @@ export default function ExerciseView({
                 {exercise.type}
               </span>
               <button
-                onClick={() => setMetronomeEnabled(!metronomeEnabled)}
+                onClick={() => {
+                  trackMetronomeToggled(!metronomeEnabled, exercise.id);
+                  setMetronomeEnabled(!metronomeEnabled);
+                }}
                 className={`px-4 py-2 rounded-full text-lg font-bold transition-all ${
                   metronomeEnabled
                     ? "bg-[#00ff88] text-black"

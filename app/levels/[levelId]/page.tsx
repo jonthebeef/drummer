@@ -6,11 +6,14 @@
 
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import LevelMap from "@/components/LevelMap";
 import { getExercisesByLevel } from "@/data/exercises";
 import { getLevelByNumber } from "@/data/levels";
+import { getExerciseStars } from "@/utils/progress";
+import { trackLevelViewed } from "@/utils/analytics";
 import type { Exercise } from "@/types";
 
 export default function LevelPage() {
@@ -20,6 +23,14 @@ export default function LevelPage() {
 
   const level = getLevelByNumber(levelId);
   const exercises = getExercisesByLevel(levelId);
+
+  // Track level view
+  useEffect(() => {
+    if (level && exercises.length > 0) {
+      const completed = exercises.filter(e => getExerciseStars(e.id) > 0).length;
+      trackLevelViewed(levelId, completed, exercises.length);
+    }
+  }, [level, levelId, exercises]);
 
   if (!level) {
     return (
