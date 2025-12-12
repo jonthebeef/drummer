@@ -4,13 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Drummer is an interactive web app for teaching kids (ages 7-13) drum patterns. Built for Seb's 12th birthday (Dec 15, 2025) with the goal of teaching counting, grooves, and eventually fills.
+Drummer is an interactive web app for teaching kids (ages 6-13) drum patterns. Built for Seb's 12th birthday (Dec 15, 2025) with the goal of teaching counting, grooves, and eventually fills.
 
 **Key Design Principles:**
 - All musical content is data-driven (not hardcoded in JSX)
 - Simple, well-commented code for non-expert parents to customize
 - One concept per exercise
-- "Theater mode" layout with drum grid player at top, content scrolling beneath
+- "Lego model" learning - start simple, build towards mastery
+- Slow tempo progression (Level 1: 50-60 BPM only)
 
 ## Development Commands
 
@@ -21,6 +22,16 @@ npm run dev
 # Build for production
 npm run build
 npm start
+```
+
+## App Routes
+
+```
+/                                    - Landing page (kid-focused homepage with demo)
+/accounts                            - Account selection/creation
+/levels/[levelId]                    - Level map (lesson selection with stars/locking)
+/levels/[levelId]/exercise/[id]      - Exercise player
+/patterns                            - Pattern browser (all patterns)
 ```
 
 ## Architecture
@@ -36,14 +47,27 @@ The app separates musical content from UI completely:
    - DrumType: "kick", "snare", "hihat"
 
 2. **Exercises** (`data/exercises.ts`) - Learning activities wrapping patterns
-   - References patterns by ID or includes inline pattern
+   - References patterns by ID
    - Contains markdown instructions
    - Specifies tempo, duration, counting guide
    - Type: "groove", "fill", "timing", or "song"
+   - Level 1 tempos: 50→52→53→54→55→56→57→58→59→60 BPM (very gradual)
 
 3. **Levels** (`data/levels.ts`) - Groups of exercises in sequence
    - Simple arrays of exercise IDs
    - Defines progression structure
+
+### Account & Progress System
+
+**Accounts** (`utils/accounts.ts`):
+- Multiple user accounts stored in localStorage
+- Each account has: id, name, avatar (emoji), createdAt
+- `getCurrentAccount()`, `signInToAccount()`, `createAccount()`
+
+**Progress** (`utils/progress.ts`):
+- Stars (0-3) earned per exercise, stored per account
+- Exercise unlocking: must complete previous exercise first
+- `getExerciseStars()`, `setExerciseStars()`, `isExerciseUnlocked()`
 
 ### Audio System
 
@@ -63,28 +87,22 @@ No external audio files needed. Sounds are generated in real-time.
 - Provides `onStepChange` callback that triggers drum sounds
 - Sequencer is 0-indexed (step 0-7), pattern data is 1-indexed (step 1-8)
 
-### Layout System - "Theater Mode"
+### Layout System
 
-**ExerciseView & PatternSelector** both use this layout:
+**Consistent max-width pattern across all pages:**
+```tsx
+<div className="max-w-6xl mx-auto px-4">
+```
 
-1. **Top Section** (dark background, full-width):
-   - Title/description bar (gradient header)
-   - Drum grid (white card, prominent)
-   - Controls (transport, practice mode, metronome)
+**LevelMap** - Angry Birds style level selection:
+- Shows all exercises with number badges
+- Stars displayed for completed exercises
+- Locked exercises show padlock, require previous completion
+- Progress bar only appears after first exercise completed
 
-2. **Bottom Section** (light background, scrollable):
-   - Instructions, counting guide, pattern selector
-   - Content can scroll while player stays fixed-like at top
-
-This mimics YouTube theater mode - player is primary focus.
-
-### State Management
-
-No external state management. All state lives in:
-- `app/page.tsx` - View routing (home/session/patterns), session progress
-- Individual components - Local UI state (playing, tempo, metronome, etc.)
-
-Session flow: Home → Level 1 exercises (hardcoded for v1) → Complete
+**ExerciseView** - Theater mode layout:
+1. Top Section (dark): Title, DrumGrid, Controls
+2. Bottom Section (light, scrollable): Instructions, counting guide
 
 ## Key Interactions
 
@@ -94,15 +112,24 @@ Session flow: Home → Level 1 exercises (hardcoded for v1) → Complete
 - Mobile: Tap buttons in PracticeControls component
 - Plays sound immediately and sets `currentHit` for visual feedback
 
+### Keyboard Shortcuts
+- **F** = Kick drum
+- **J** = Snare drum
+- **Space** = Hi-hat
+- **Arrow Up/Down** = Adjust tempo ±5 BPM
+- **M** = Toggle metronome
+
 ### Visual Feedback
 `DrumGrid` component shows:
-- Current step (blue border, scale-up during playback)
+- Current step (green border, scale-up during playback)
 - Drum hits (colored circles - cyan/amber/purple)
 - User correct hits (green ring flash when hit matches step)
+- Optional `showKeyLegend` prop to hide keyboard shortcuts
 
-### Practice Modes
-- **Listen**: Just play pattern, no input tracking
-- **Tap along**: Shows visual feedback when user hits match pattern
+### Practice Flow
+1. **Listen phase**: Pattern plays 4 loops automatically
+2. **Practice phase**: User taps along, gets visual feedback
+3. **Scoring**: Stars awarded based on accuracy (via `useScoring` hook)
 
 ## Adding New Musical Content
 
@@ -114,7 +141,7 @@ Add to `data/patterns.ts`:
   name: "Pattern Name",
   difficulty: "easy" | "medium" | "hard",
   description: "Kid-friendly description",
-  defaultTempoBpm: 80,
+  defaultTempoBpm: 55,  // Keep slow for beginners
   timeSignature: "4/4",
   subdivision: "eighth",
   steps: [
@@ -135,9 +162,9 @@ Add to `data/exercises.ts`, then add its ID to a level in `data/levels.ts`:
   type: "groove",
   instructions: "Markdown text for kids + parents",
   counting: "1 & 2 & 3 & 4 &",
-  tempoBpm: 80,
+  tempoBpm: 65,  // Level 2 can be slightly faster
   durationBars: 4,
-  patternId: "boots-and-cats"  // or inline pattern object
+  patternId: "pattern-id"
 }
 ```
 
@@ -147,7 +174,7 @@ Add to `data/levels.ts`:
 {
   id: "level-2",
   levelNumber: 2,
-  name: "Level 2: Faster Beats",
+  name: "Level 2: Rock Grooves",
   description: "What kids will learn",
   exerciseIds: ["level-2-ex-1", "level-2-ex-2"]
 }
@@ -156,15 +183,20 @@ Add to `data/levels.ts`:
 ## Component Hierarchy
 
 ```
-page.tsx (routing: home/session/patterns)
-├── ExerciseView
-│   ├── DrumGrid (visual pattern display)
-│   ├── TransportControls (play/pause/tempo/metronome)
-│   └── PracticeControls (listen/tap mode + mobile buttons)
-│
-└── PatternSelector
-    ├── DrumGrid
-    └── Transport controls inline
+app/
+├── page.tsx (landing page with demo DrumGrid)
+├── accounts/page.tsx (account selection/creation)
+├── levels/[levelId]/
+│   ├── page.tsx (uses LevelMap component)
+│   └── exercise/[exerciseId]/page.tsx (uses ExerciseView)
+└── patterns/page.tsx (pattern browser)
+
+components/
+├── DrumGrid.tsx (visual pattern display)
+├── LevelMap.tsx (level selection with stars/locking)
+├── ExerciseView.tsx (full exercise player)
+├── TransportControls.tsx (play/pause/tempo/metronome)
+└── PracticeControls.tsx (listen/tap mode + mobile buttons)
 ```
 
 ## Important Constraints
@@ -183,14 +215,19 @@ page.tsx (routing: home/session/patterns)
    - Already wired into play buttons and drum input
 
 4. **Mobile Considerations**:
+   - Homepage drum demo hidden on mobile (not responsive yet)
    - Tap buttons always visible in "tap along" mode
    - Keyboard shortcuts work alongside tap buttons
-   - Responsive grid layout adjusts for small screens
+
+5. **Learning Progression**:
+   - Level 1 tempos stay in 50s (50-60 BPM max)
+   - 4 listen loops before practice phase
+   - One concept per exercise
 
 ## Future Development Notes
 
 Currently v1 for Seb's birthday. Planned expansions:
 - More levels (fills, dynamics, timing exercises)
-- Progress tracking (localStorage or backend)
-- Accuracy scoring for "tap along" mode
+- Better mobile responsive design for DrumGrid
+- Accuracy scoring refinements
 - Better onboarding for Matilda (age 6) - simpler exercises
