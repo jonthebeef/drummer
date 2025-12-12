@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Rubik_Mono_One } from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/Providers";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -26,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${outfit.variable} ${rubikMonoOne.variable} antialiased font-sans`}>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

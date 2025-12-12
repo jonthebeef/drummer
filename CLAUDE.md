@@ -224,6 +224,32 @@ components/
    - 4 listen loops before practice phase
    - One concept per exercise
 
+## Analytics (PostHog)
+
+Privacy-first analytics with GDPR-compliant consent management.
+
+**Setup:**
+1. Create account at https://eu.posthog.com (EU hosting)
+2. Copy `.env.local.example` to `.env.local`
+3. Add your PostHog project key
+
+**Key files:**
+- `components/PostHogProvider.tsx` - Consent management, PostHog init
+- `components/CookieConsentBanner.tsx` - User-facing consent UI
+- `utils/analytics.ts` - Event tracking functions
+
+**Events tracked:**
+- `account_created` / `account_signed_in` - User identity
+- `exercise_started` / `exercise_completed` - Learning journey
+- `level_viewed` - Navigation
+- `tempo_changed` / `metronome_toggled` - Practice behavior
+
+**Consent flow:**
+- Cookie banner shows on first visit
+- PostHog only initializes after explicit consent
+- "No thanks" opts out completely
+- Consent stored in localStorage (`drummer_analytics_consent`)
+
 ## Future Development Notes
 
 Currently v1 for Seb's birthday. Planned expansions:

@@ -6,11 +6,13 @@
 
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ExerciseView from "@/components/ExerciseView";
 import { getExerciseById, getExercisesByLevel } from "@/data/exercises";
 import { isExerciseUnlocked, getExerciseProgress } from "@/utils/progress";
+import { trackExerciseStarted, trackExerciseCompleted } from "@/utils/analytics";
 
 export default function ExercisePage() {
   const params = useParams();
@@ -25,6 +27,13 @@ export default function ExercisePage() {
 
   // Check if this exercise is unlocked
   const unlocked = exercise ? isExerciseUnlocked(exercise.id, exerciseIds) : false;
+
+  // Track exercise started
+  useEffect(() => {
+    if (exercise && unlocked) {
+      trackExerciseStarted(exercise.id, exercise.title, levelId);
+    }
+  }, [exercise, unlocked, levelId]);
 
   if (!exercise) {
     return (
@@ -64,6 +73,17 @@ export default function ExercisePage() {
     // Check if the CURRENT exercise was completed (has at least 1 star)
     const currentProgress = getExerciseProgress(exercise.id);
     const currentCompleted = currentProgress !== null && currentProgress.stars >= 1;
+
+    // Track exercise completion with stars
+    if (currentProgress) {
+      trackExerciseCompleted(
+        exercise.id,
+        exercise.title,
+        levelId,
+        currentProgress.stars,
+        currentProgress.bestAccuracy
+      );
+    }
 
     if (!currentCompleted) {
       // User didn't earn any stars - go back to map, don't advance

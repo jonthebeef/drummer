@@ -9,6 +9,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAllAccounts, signInToAccount, createAccount } from "@/utils/accounts";
+import { trackAccountCreated, trackAccountSignIn } from "@/utils/analytics";
 import type { Account } from "@/types";
 
 // Fun avatars for kids to choose from
@@ -32,6 +33,7 @@ export default function AccountsPage() {
 
   const handleSelectAccount = (accountId: string) => {
     signInToAccount(accountId);
+    trackAccountSignIn(accountId);
     router.push("/levels/1");
   };
 
@@ -43,6 +45,7 @@ export default function AccountsPage() {
 
     const account = createAccount(newName, selectedAvatar);
     signInToAccount(account.id);
+    trackAccountCreated(account.id, selectedAvatar);
     router.push("/levels/1");
   };
 
