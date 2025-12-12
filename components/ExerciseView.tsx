@@ -117,10 +117,10 @@ export default function ExerciseView({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "ArrowUp") {
         event.preventDefault();
-        setBpm(prev => Math.min(160, prev + 5));
+        setBpm(Math.min(160, bpm + 5));
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
-        setBpm(prev => Math.max(40, prev - 5));
+        setBpm(Math.max(40, bpm - 5));
       } else if (event.key === "m" || event.key === "M") {
         event.preventDefault();
         setMetronomeEnabled(prev => !prev);
@@ -129,7 +129,7 @@ export default function ExerciseView({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setBpm]);
+  }, [setBpm, bpm]);
 
   // Track loops in LISTEN mode
   const lastStepRef = useRef(-1);
