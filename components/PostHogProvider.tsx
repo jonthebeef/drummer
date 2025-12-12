@@ -8,7 +8,6 @@
 "use client";
 
 import { useEffect, createContext, useContext, useState, ReactNode } from "react";
-import posthog from "posthog-js";
 
 // Cookie consent status
 type ConsentStatus = "pending" | "granted" | "denied";
@@ -40,21 +39,24 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
     // If no saved consent, status remains "pending" and banner shows
   }, []);
 
-  // Initialize PostHog when consent is granted
+  // Initialize PostHog when consent is granted (client-side only)
   useEffect(() => {
     if (consentStatus === "granted" && !initialized && POSTHOG_KEY) {
-      posthog.init(POSTHOG_KEY, {
-        api_host: POSTHOG_HOST,
-        person_profiles: "identified_only",
-        capture_pageview: true,
-        capture_pageleave: true,
-        persistence: "localStorage+cookie",
-        // Respect Do Not Track
-        respect_dnt: true,
-        // EU hosting for GDPR compliance
-        ui_host: "https://eu.posthog.com",
+      // Dynamic import to avoid SSR issues
+      import("posthog-js").then((posthog) => {
+        posthog.default.init(POSTHOG_KEY, {
+          api_host: POSTHOG_HOST,
+          person_profiles: "identified_only",
+          capture_pageview: true,
+          capture_pageleave: true,
+          persistence: "localStorage+cookie",
+          // Respect Do Not Track
+          respect_dnt: true,
+          // EU hosting for GDPR compliance
+          ui_host: "https://eu.posthog.com",
+        });
+        setInitialized(true);
       });
-      setInitialized(true);
     }
   }, [consentStatus, initialized]);
 
@@ -68,7 +70,9 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
     setConsentStatus("denied");
     // Opt out of PostHog if it was somehow initialized
     if (initialized) {
-      posthog.opt_out_capturing();
+      import("posthog-js").then((posthog) => {
+        posthog.default.opt_out_capturing();
+      });
     }
   };
 
@@ -92,7 +96,9 @@ export function usePostHogConsent() {
  */
 export function trackEvent(eventName: string, properties?: Record<string, unknown>) {
   if (typeof window !== "undefined" && localStorage.getItem(CONSENT_KEY) === "granted") {
-    posthog.capture(eventName, properties);
+    import("posthog-js").then((posthog) => {
+      posthog.default.capture(eventName, properties);
+    });
   }
 }
 
@@ -101,6 +107,8 @@ export function trackEvent(eventName: string, properties?: Record<string, unknow
  */
 export function identifyUser(userId: string, properties?: Record<string, unknown>) {
   if (typeof window !== "undefined" && localStorage.getItem(CONSENT_KEY) === "granted") {
-    posthog.identify(userId, properties);
+    import("posthog-js").then((posthog) => {
+      posthog.default.identify(userId, properties);
+    });
   }
 }
