@@ -229,8 +229,11 @@ export default function ExerciseView({
     <div className="min-h-screen bg-black">
       {/* Show rotation prompt on mobile portrait */}
       <RotatePrompt />
-      {/* Header - Compact on mobile landscape */}
-      <div className="bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 text-white shadow-2xl border-b-2 border-zinc-600">
+
+      {/* Header - Hidden on mobile landscape during LISTEN/PRACTICE, shown on desktop */}
+      <div className={`bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 text-white shadow-2xl border-b-2 border-zinc-600 ${
+        (lessonState === "LISTEN" || lessonState === "PRACTICE") ? "hidden lg:block" : ""
+      }`}>
         <div className="max-w-6xl mx-auto px-4 py-3 md:py-6">
           <div className="flex items-center justify-between gap-3 md:gap-6">
             <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white truncate">{exercise.title}</h1>
@@ -260,7 +263,7 @@ export default function ExerciseView({
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8">
+      <div className={`${(lessonState === "LISTEN" || lessonState === "PRACTICE") ? "" : "max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8"}`}>
         {/* READY STATE - Big Start Button */}
         {lessonState === "READY" && (
           <div className="space-y-8">
@@ -324,10 +327,10 @@ export default function ExerciseView({
         {/* LISTEN STATE */}
         {lessonState === "LISTEN" && (
           <>
-            {/* MOBILE LANDSCAPE: Game-style layout */}
-            <div className="lg:hidden">
+            {/* MOBILE LANDSCAPE: Fullscreen game mode */}
+            <div className="lg:hidden fixed inset-0 bg-black flex flex-col">
               {/* Slim top bar */}
-              <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black px-4 py-2 flex items-center justify-between mb-2">
+              <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black px-4 py-2 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-bold">👂</span>
                   <span className="text-sm font-bold">{listenLoops + 1}/4</span>
@@ -341,9 +344,9 @@ export default function ExerciseView({
                 <div className="text-sm font-bold">WATCH & LISTEN</div>
               </div>
 
-              {/* Full-width drum grid (no side buttons in listen mode) */}
-              <div className="h-[calc(100vh-140px)]">
-                <div className="h-full bg-zinc-900 rounded-lg shadow-2xl p-6 border-2 border-[#00d9ff] flex items-center justify-center">
+              {/* Full-screen drum grid (no side buttons in listen mode) */}
+              <div className="flex-1 p-2">
+                <div className="h-full bg-zinc-900 rounded-lg shadow-2xl p-4 border-2 border-[#00d9ff] flex items-center justify-center">
                   <DrumGrid
                     pattern={pattern}
                     currentStep={isPlaying ? currentStep : undefined}
@@ -380,10 +383,10 @@ export default function ExerciseView({
         {/* PRACTICE STATE */}
         {lessonState === "PRACTICE" && (
           <>
-            {/* MOBILE LANDSCAPE: Game-style layout (< 768px width, landscape) */}
-            <div className="lg:hidden">
+            {/* MOBILE LANDSCAPE: Fullscreen game mode */}
+            <div className="lg:hidden fixed inset-0 bg-black flex flex-col">
               {/* Slim top bar */}
-              <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black px-4 py-2 flex items-center justify-between mb-2">
+              <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black px-4 py-2 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-bold">🥁</span>
                   <span className="text-sm font-bold">{loopsCompleted + 1}/4</span>
@@ -401,7 +404,7 @@ export default function ExerciseView({
               </div>
 
               {/* 3-column game layout: Left buttons | Grid | Right button */}
-              <div className="grid grid-cols-[80px_1fr_80px] gap-2 h-[calc(100vh-140px)]">
+              <div className="flex-1 grid grid-cols-[80px_1fr_80px] gap-2 p-2">
                 {/* Left sidebar: KICK + SNARE */}
                 <div className="flex flex-col gap-2">
                   <button
@@ -424,7 +427,7 @@ export default function ExerciseView({
                 </div>
 
                 {/* Center: HUGE drum grid */}
-                <div className="bg-zinc-900 rounded-lg shadow-2xl p-4 border-2 border-[#ff9100] flex items-center justify-center overflow-hidden">
+                <div className="bg-zinc-900 rounded-lg shadow-2xl p-3 border-2 border-[#ff9100] flex items-center justify-center overflow-hidden">
                   <DrumGrid
                     pattern={pattern}
                     currentStep={isPlaying ? currentStep : undefined}
