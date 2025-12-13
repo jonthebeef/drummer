@@ -321,92 +321,198 @@ export default function ExerciseView({
           </div>
         )}
 
-        {/* LISTEN STATE - Compact on mobile */}
+        {/* LISTEN STATE */}
         {lessonState === "LISTEN" && (
-          <div className="space-y-4 md:space-y-6">
-            {/* Banner - Compact on mobile */}
-            <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black text-center py-3 md:py-6 rounded-xl md:rounded-2xl shadow-2xl border-2 md:border-4 border-[#00d9ff]">
-              <div className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">👂 <span className="hidden sm:inline">WATCH & LISTEN</span></div>
-              <div className="text-lg md:text-2xl font-bold">Loop {listenLoops + 1} of 4</div>
+          <>
+            {/* MOBILE LANDSCAPE: Game-style layout */}
+            <div className="lg:hidden">
+              {/* Slim top bar */}
+              <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black px-4 py-2 flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold">👂</span>
+                  <span className="text-sm font-bold">{listenLoops + 1}/4</span>
+                  <div className="w-24 bg-black bg-opacity-30 rounded-full h-2">
+                    <div
+                      className="bg-black h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${((listenLoops + 1) / 4) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="text-sm font-bold">WATCH & LISTEN</div>
+              </div>
+
+              {/* Full-width drum grid (no side buttons in listen mode) */}
+              <div className="h-[calc(100vh-140px)]">
+                <div className="h-full bg-zinc-900 rounded-lg shadow-2xl p-6 border-2 border-[#00d9ff] flex items-center justify-center">
+                  <DrumGrid
+                    pattern={pattern}
+                    currentStep={isPlaying ? currentStep : undefined}
+                    userHit={null}
+                    showCounting={true}
+                    countingMode={exercise.countingMode}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Drum Grid - Compact on mobile */}
-            <div className="bg-zinc-900 rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-8 border-2 md:border-4 border-[#00d9ff]">
-              <DrumGrid
-                pattern={pattern}
-                currentStep={isPlaying ? currentStep : undefined}
-                userHit={null}
-                showCounting={true}
-                countingMode={exercise.countingMode}
-              />
+            {/* DESKTOP: Original layout */}
+            <div className="hidden lg:block space-y-6">
+              {/* Banner */}
+              <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black text-center py-6 rounded-2xl shadow-2xl border-4 border-[#00d9ff]">
+                <div className="text-4xl font-bold mb-2">👂 WATCH & LISTEN</div>
+                <div className="text-2xl font-bold">Loop {listenLoops + 1} of 4</div>
+              </div>
+
+              {/* Drum Grid */}
+              <div className="bg-zinc-900 rounded-2xl shadow-2xl p-8 border-4 border-[#00d9ff]">
+                <DrumGrid
+                  pattern={pattern}
+                  currentStep={isPlaying ? currentStep : undefined}
+                  userHit={null}
+                  showCounting={true}
+                  countingMode={exercise.countingMode}
+                />
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* PRACTICE STATE */}
         {lessonState === "PRACTICE" && (
-          <div className="space-y-4 md:space-y-6">
-            {/* Banner with progress - Compact on mobile */}
-            <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black rounded-xl md:rounded-2xl shadow-2xl p-3 md:p-6 border-2 md:border-4 border-[#ff9100]">
-              <div className="flex items-center justify-between mb-2 md:mb-4">
-                <div className="text-xl md:text-4xl font-bold">🥁 <span className="hidden sm:inline">YOU'RE ROCKING!</span></div>
-                <div className="text-xl md:text-3xl font-bold">Loop {loopsCompleted + 1} / 4</div>
+          <>
+            {/* MOBILE LANDSCAPE: Game-style layout (< 768px width, landscape) */}
+            <div className="lg:hidden">
+              {/* Slim top bar */}
+              <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black px-4 py-2 flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold">🥁</span>
+                  <span className="text-sm font-bold">{loopsCompleted + 1}/4</span>
+                  <div className="w-24 bg-black bg-opacity-30 rounded-full h-2">
+                    <div
+                      className="bg-black h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(loopsCompleted / 4) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="text-sm font-bold flex items-center gap-2">
+                  <span>{bpm}</span>
+                  <span>{isPlaying ? "▶" : "⏸"}</span>
+                </div>
               </div>
-              <div className="w-full bg-black bg-opacity-30 rounded-full h-3 md:h-5 border-2 border-black">
-                <div
-                  className="bg-black h-3 md:h-5 rounded-full transition-all duration-300"
-                  style={{ width: `${(loopsCompleted / 4) * 100}%` }}
+
+              {/* 3-column game layout: Left buttons | Grid | Right button */}
+              <div className="grid grid-cols-[80px_1fr_80px] gap-2 h-[calc(100vh-140px)]">
+                {/* Left sidebar: KICK + SNARE */}
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => hitDrum("kick")}
+                    className="flex-1 bg-gradient-to-br from-[#2979ff] to-[#0050d0] active:scale-95 text-white font-bold rounded-lg transition-all shadow-xl border-2 border-[#2979ff] flex flex-col items-center justify-center"
+                  >
+                    <div className="text-3xl mb-1">🦵</div>
+                    <div className="text-xs">KICK</div>
+                    <div className="text-xs opacity-75">F</div>
+                  </button>
+
+                  <button
+                    onClick={() => hitDrum("snare")}
+                    className="flex-1 bg-gradient-to-br from-[#ff1744] to-[#c0001a] active:scale-95 text-white font-bold rounded-lg transition-all shadow-xl border-2 border-[#ff1744] flex flex-col items-center justify-center"
+                  >
+                    <div className="text-3xl mb-1">🥁</div>
+                    <div className="text-xs">SNARE</div>
+                    <div className="text-xs opacity-75">J</div>
+                  </button>
+                </div>
+
+                {/* Center: HUGE drum grid */}
+                <div className="bg-zinc-900 rounded-lg shadow-2xl p-4 border-2 border-[#ff9100] flex items-center justify-center overflow-hidden">
+                  <DrumGrid
+                    pattern={pattern}
+                    currentStep={isPlaying ? currentStep : undefined}
+                    userHit={currentHit}
+                    showCounting={true}
+                    countingMode={exercise.countingMode}
+                    stepFeedback={getStepFeedback}
+                  />
+                </div>
+
+                {/* Right sidebar: HIHAT */}
+                <div className="flex flex-col">
+                  <button
+                    onClick={() => hitDrum("hihat")}
+                    className="flex-1 bg-gradient-to-br from-[#00d9ff] to-[#00a0c0] active:scale-95 text-black font-bold rounded-lg transition-all shadow-xl border-2 border-[#00d9ff] flex flex-col items-center justify-center"
+                  >
+                    <div className="text-3xl mb-1">🔔</div>
+                    <div className="text-xs">HIHAT</div>
+                    <div className="text-xs opacity-75">SPC</div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* DESKTOP: Original layout (≥ 768px) */}
+            <div className="hidden lg:block space-y-6">
+              {/* Banner with progress */}
+              <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black rounded-2xl shadow-2xl p-6 border-4 border-[#ff9100]">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-4xl font-bold">🥁 YOU'RE ROCKING!</div>
+                  <div className="text-3xl font-bold">Loop {loopsCompleted + 1} / 4</div>
+                </div>
+                <div className="w-full bg-black bg-opacity-30 rounded-full h-5 border-2 border-black">
+                  <div
+                    className="bg-black h-5 rounded-full transition-all duration-300"
+                    style={{ width: `${(loopsCompleted / 4) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Drum Grid with feedback */}
+              <div className="bg-zinc-900 rounded-2xl shadow-2xl p-8 border-4 border-[#ff9100]">
+                <DrumGrid
+                  pattern={pattern}
+                  currentStep={isPlaying ? currentStep : undefined}
+                  userHit={currentHit}
+                  showCounting={true}
+                  countingMode={exercise.countingMode}
+                  stepFeedback={getStepFeedback}
                 />
               </div>
-            </div>
 
-            {/* Drum Grid with feedback - Compact on mobile */}
-            <div className="bg-zinc-900 rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-8 border-2 md:border-4 border-[#ff9100]">
-              <DrumGrid
-                pattern={pattern}
-                currentStep={isPlaying ? currentStep : undefined}
-                userHit={currentHit}
-                showCounting={true}
-                countingMode={exercise.countingMode}
-                stepFeedback={getStepFeedback}
-              />
-            </div>
+              {/* Tap buttons */}
+              <div className="bg-zinc-900 rounded-2xl border-2 border-zinc-800 p-8 shadow-2xl">
+                <div className="text-center mb-6 text-zinc-300 text-xl font-bold">
+                  Hit the drums! 🤘
+                </div>
+                <div className="grid grid-cols-3 gap-6">
+                  <button
+                    onClick={() => hitDrum("kick")}
+                    className="bg-gradient-to-br from-[#2979ff] to-[#0050d0] hover:from-[#0050d0] hover:to-[#2979ff] active:scale-95 text-white font-bold py-12 rounded-2xl transition-all shadow-2xl border-4 border-[#2979ff]"
+                  >
+                    <div className="text-5xl mb-3">🦵</div>
+                    <div className="text-2xl">KICK</div>
+                    <div className="text-lg opacity-75 mt-2">(F)</div>
+                  </button>
 
-            {/* Tap buttons - Compact on mobile landscape */}
-            <div className="bg-zinc-900 rounded-xl md:rounded-2xl border-2 border-zinc-800 p-4 md:p-8 shadow-2xl">
-              <div className="text-center mb-3 md:mb-6 text-zinc-300 text-base md:text-xl font-bold">
-                Hit the drums! 🤘
-              </div>
-              <div className="grid grid-cols-3 gap-3 md:gap-6">
-                <button
-                  onClick={() => hitDrum("kick")}
-                  className="bg-gradient-to-br from-[#2979ff] to-[#0050d0] hover:from-[#0050d0] hover:to-[#2979ff] active:scale-95 text-white font-bold py-6 md:py-12 rounded-xl md:rounded-2xl transition-all shadow-2xl border-2 md:border-4 border-[#2979ff]"
-                >
-                  <div className="text-3xl md:text-5xl mb-1 md:mb-3">🦵</div>
-                  <div className="text-base md:text-2xl">KICK</div>
-                  <div className="text-xs md:text-lg opacity-75 mt-1 md:mt-2">(F)</div>
-                </button>
+                  <button
+                    onClick={() => hitDrum("snare")}
+                    className="bg-gradient-to-br from-[#ff1744] to-[#c0001a] hover:from-[#c0001a] hover:to-[#ff1744] active:scale-95 text-white font-bold py-12 rounded-2xl transition-all shadow-2xl border-4 border-[#ff1744]"
+                  >
+                    <div className="text-5xl mb-3">🥁</div>
+                    <div className="text-2xl">SNARE</div>
+                    <div className="text-lg opacity-75 mt-2">(J)</div>
+                  </button>
 
-                <button
-                  onClick={() => hitDrum("snare")}
-                  className="bg-gradient-to-br from-[#ff1744] to-[#c0001a] hover:from-[#c0001a] hover:to-[#ff1744] active:scale-95 text-white font-bold py-6 md:py-12 rounded-xl md:rounded-2xl transition-all shadow-2xl border-2 md:border-4 border-[#ff1744]"
-                >
-                  <div className="text-3xl md:text-5xl mb-1 md:mb-3">🥁</div>
-                  <div className="text-base md:text-2xl">SNARE</div>
-                  <div className="text-xs md:text-lg opacity-75 mt-1 md:mt-2">(J)</div>
-                </button>
-
-                <button
-                  onClick={() => hitDrum("hihat")}
-                  className="bg-gradient-to-br from-[#00d9ff] to-[#00a0c0] hover:from-[#00a0c0] hover:to-[#00d9ff] active:scale-95 text-black font-bold py-6 md:py-12 rounded-xl md:rounded-2xl transition-all shadow-2xl border-2 md:border-4 border-[#00d9ff]"
-                >
-                  <div className="text-3xl md:text-5xl mb-1 md:mb-3">🔔</div>
-                  <div className="text-base md:text-2xl">HI HAT</div>
-                  <div className="text-xs md:text-lg opacity-75 mt-1 md:mt-2">(Space)</div>
-                </button>
+                  <button
+                    onClick={() => hitDrum("hihat")}
+                    className="bg-gradient-to-br from-[#00d9ff] to-[#00a0c0] hover:from-[#00a0c0] hover:to-[#00d9ff] active:scale-95 text-black font-bold py-12 rounded-2xl transition-all shadow-2xl border-4 border-[#00d9ff]"
+                  >
+                    <div className="text-5xl mb-3">🔔</div>
+                    <div className="text-2xl">HI HAT</div>
+                    <div className="text-lg opacity-75 mt-2">(Space)</div>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* RESULTS STATE */}
