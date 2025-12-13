@@ -16,6 +16,7 @@ import { playDrum, playMetronomeClick, resumeAudioContext } from "@/utils/drumSy
 import { saveExerciseProgress } from "@/utils/progress";
 import { trackTempoChanged, trackMetronomeToggled, trackListenPhaseStarted, trackPracticePhaseStarted } from "@/utils/analytics";
 import DrumGrid from "./DrumGrid";
+import RotatePrompt from "./RotatePrompt";
 
 interface ExerciseViewProps {
   exercise: Exercise;
@@ -226,16 +227,18 @@ export default function ExerciseView({
   // Render different screens based on state
   return (
     <div className="min-h-screen bg-black">
-      {/* Header */}
+      {/* Show rotation prompt on mobile portrait */}
+      <RotatePrompt />
+      {/* Header - Compact on mobile landscape */}
       <div className="bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 text-white shadow-2xl border-b-2 border-zinc-600">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between gap-6">
-            <h1 className="text-3xl md:text-4xl font-bold text-white">{exercise.title}</h1>
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="bg-[#00d9ff] text-black px-4 py-2 rounded-full text-lg font-bold">
-                LEVEL {exercise.level}
+        <div className="max-w-6xl mx-auto px-4 py-3 md:py-6">
+          <div className="flex items-center justify-between gap-3 md:gap-6">
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white truncate">{exercise.title}</h1>
+            <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+              <span className="bg-[#00d9ff] text-black px-2 md:px-4 py-1 md:py-2 rounded-full text-sm md:text-lg font-bold">
+                L{exercise.level}
               </span>
-              <span className="bg-[#ff9100] text-black px-4 py-2 rounded-full text-lg font-bold uppercase">
+              <span className="hidden sm:inline-block bg-[#ff9100] text-black px-2 md:px-4 py-1 md:py-2 rounded-full text-sm md:text-lg font-bold uppercase">
                 {exercise.type}
               </span>
               <button
@@ -243,21 +246,21 @@ export default function ExerciseView({
                   trackMetronomeToggled(!metronomeEnabled, exercise.id);
                   setMetronomeEnabled(!metronomeEnabled);
                 }}
-                className={`px-4 py-2 rounded-full text-lg font-bold transition-all ${
+                className={`px-2 md:px-4 py-1 md:py-2 rounded-full text-sm md:text-lg font-bold transition-all ${
                   metronomeEnabled
                     ? "bg-[#00ff88] text-black"
                     : "bg-zinc-700 text-zinc-400"
                 }`}
                 title={metronomeEnabled ? "Metronome ON (Press M to toggle)" : "Metronome OFF (Press M to toggle)"}
               >
-                🎵 {metronomeEnabled ? "ON" : "OFF"}
+                🎵 <span className="hidden sm:inline">{metronomeEnabled ? "ON" : "OFF"}</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8">
         {/* READY STATE - Big Start Button */}
         {lessonState === "READY" && (
           <div className="space-y-8">
@@ -296,21 +299,21 @@ export default function ExerciseView({
           </div>
         )}
 
-        {/* COUNTDOWN STATES */}
+        {/* COUNTDOWN STATES - Responsive sizing */}
         {(lessonState === "COUNTDOWN_LISTEN" || lessonState === "COUNTDOWN_PRACTICE") && (
-          <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex items-center justify-center min-h-[50vh] md:min-h-[60vh]">
             <div className="text-center">
               {countdown > 0 ? (
                 <>
-                  <div className="text-[200px] font-bold text-[#00ff88] mb-12 animate-pulse">
+                  <div className="text-8xl md:text-[200px] font-bold text-[#00ff88] mb-6 md:mb-12 animate-pulse">
                     {countdown}
                   </div>
-                  <div className="text-5xl font-bold text-zinc-300">
+                  <div className="text-2xl md:text-5xl font-bold text-zinc-300">
                     {lessonState === "COUNTDOWN_LISTEN" ? "👂 Get ready to watch..." : "🥁 Your turn!"}
                   </div>
                 </>
               ) : (
-                <div className="text-9xl font-bold text-[#ff9100] animate-pulse">
+                <div className="text-6xl md:text-9xl font-bold text-[#ff9100] animate-pulse">
                   {lessonState === "COUNTDOWN_LISTEN" ? "WATCH!" : "GO!"}
                 </div>
               )}
@@ -318,17 +321,17 @@ export default function ExerciseView({
           </div>
         )}
 
-        {/* LISTEN STATE */}
+        {/* LISTEN STATE - Compact on mobile */}
         {lessonState === "LISTEN" && (
-          <div className="space-y-6">
-            {/* Banner */}
-            <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black text-center py-6 rounded-2xl shadow-2xl border-4 border-[#00d9ff]">
-              <div className="text-4xl font-bold mb-2">👂 WATCH & LISTEN</div>
-              <div className="text-2xl font-bold">Loop {listenLoops + 1} of 4</div>
+          <div className="space-y-4 md:space-y-6">
+            {/* Banner - Compact on mobile */}
+            <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black text-center py-3 md:py-6 rounded-xl md:rounded-2xl shadow-2xl border-2 md:border-4 border-[#00d9ff]">
+              <div className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">👂 <span className="hidden sm:inline">WATCH & LISTEN</span></div>
+              <div className="text-lg md:text-2xl font-bold">Loop {listenLoops + 1} of 4</div>
             </div>
 
-            {/* Drum Grid */}
-            <div className="bg-zinc-900 rounded-2xl shadow-2xl p-8 border-4 border-[#00d9ff]">
+            {/* Drum Grid - Compact on mobile */}
+            <div className="bg-zinc-900 rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-8 border-2 md:border-4 border-[#00d9ff]">
               <DrumGrid
                 pattern={pattern}
                 currentStep={isPlaying ? currentStep : undefined}
@@ -342,23 +345,23 @@ export default function ExerciseView({
 
         {/* PRACTICE STATE */}
         {lessonState === "PRACTICE" && (
-          <div className="space-y-6">
-            {/* Banner with progress */}
-            <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black rounded-2xl shadow-2xl p-6 border-4 border-[#ff9100]">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-4xl font-bold">🥁 YOU'RE ROCKING!</div>
-                <div className="text-3xl font-bold">Loop {loopsCompleted + 1} / 4</div>
+          <div className="space-y-4 md:space-y-6">
+            {/* Banner with progress - Compact on mobile */}
+            <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black rounded-xl md:rounded-2xl shadow-2xl p-3 md:p-6 border-2 md:border-4 border-[#ff9100]">
+              <div className="flex items-center justify-between mb-2 md:mb-4">
+                <div className="text-xl md:text-4xl font-bold">🥁 <span className="hidden sm:inline">YOU'RE ROCKING!</span></div>
+                <div className="text-xl md:text-3xl font-bold">Loop {loopsCompleted + 1} / 4</div>
               </div>
-              <div className="w-full bg-black bg-opacity-30 rounded-full h-5 border-2 border-black">
+              <div className="w-full bg-black bg-opacity-30 rounded-full h-3 md:h-5 border-2 border-black">
                 <div
-                  className="bg-black h-5 rounded-full transition-all duration-300"
+                  className="bg-black h-3 md:h-5 rounded-full transition-all duration-300"
                   style={{ width: `${(loopsCompleted / 4) * 100}%` }}
                 />
               </div>
             </div>
 
-            {/* Drum Grid with feedback */}
-            <div className="bg-zinc-900 rounded-2xl shadow-2xl p-8 border-4 border-[#ff9100]">
+            {/* Drum Grid with feedback - Compact on mobile */}
+            <div className="bg-zinc-900 rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-8 border-2 md:border-4 border-[#ff9100]">
               <DrumGrid
                 pattern={pattern}
                 currentStep={isPlaying ? currentStep : undefined}
@@ -369,37 +372,37 @@ export default function ExerciseView({
               />
             </div>
 
-            {/* Tap buttons - like stage lights! */}
-            <div className="bg-zinc-900 rounded-2xl border-2 border-zinc-800 p-8 shadow-2xl">
-              <div className="text-center mb-6 text-zinc-300 text-xl font-bold">
+            {/* Tap buttons - Compact on mobile landscape */}
+            <div className="bg-zinc-900 rounded-xl md:rounded-2xl border-2 border-zinc-800 p-4 md:p-8 shadow-2xl">
+              <div className="text-center mb-3 md:mb-6 text-zinc-300 text-base md:text-xl font-bold">
                 Hit the drums! 🤘
               </div>
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-3 md:gap-6">
                 <button
                   onClick={() => hitDrum("kick")}
-                  className="bg-gradient-to-br from-[#2979ff] to-[#0050d0] hover:from-[#0050d0] hover:to-[#2979ff] active:scale-95 text-white font-bold py-12 rounded-2xl transition-all shadow-2xl border-4 border-[#2979ff]"
+                  className="bg-gradient-to-br from-[#2979ff] to-[#0050d0] hover:from-[#0050d0] hover:to-[#2979ff] active:scale-95 text-white font-bold py-6 md:py-12 rounded-xl md:rounded-2xl transition-all shadow-2xl border-2 md:border-4 border-[#2979ff]"
                 >
-                  <div className="text-5xl mb-3">🦵</div>
-                  <div className="text-2xl">KICK</div>
-                  <div className="text-lg opacity-75 mt-2">(F)</div>
+                  <div className="text-3xl md:text-5xl mb-1 md:mb-3">🦵</div>
+                  <div className="text-base md:text-2xl">KICK</div>
+                  <div className="text-xs md:text-lg opacity-75 mt-1 md:mt-2">(F)</div>
                 </button>
 
                 <button
                   onClick={() => hitDrum("snare")}
-                  className="bg-gradient-to-br from-[#ff1744] to-[#c0001a] hover:from-[#c0001a] hover:to-[#ff1744] active:scale-95 text-white font-bold py-12 rounded-2xl transition-all shadow-2xl border-4 border-[#ff1744]"
+                  className="bg-gradient-to-br from-[#ff1744] to-[#c0001a] hover:from-[#c0001a] hover:to-[#ff1744] active:scale-95 text-white font-bold py-6 md:py-12 rounded-xl md:rounded-2xl transition-all shadow-2xl border-2 md:border-4 border-[#ff1744]"
                 >
-                  <div className="text-5xl mb-3">🥁</div>
-                  <div className="text-2xl">SNARE</div>
-                  <div className="text-lg opacity-75 mt-2">(J)</div>
+                  <div className="text-3xl md:text-5xl mb-1 md:mb-3">🥁</div>
+                  <div className="text-base md:text-2xl">SNARE</div>
+                  <div className="text-xs md:text-lg opacity-75 mt-1 md:mt-2">(J)</div>
                 </button>
 
                 <button
                   onClick={() => hitDrum("hihat")}
-                  className="bg-gradient-to-br from-[#00d9ff] to-[#00a0c0] hover:from-[#00a0c0] hover:to-[#00d9ff] active:scale-95 text-black font-bold py-12 rounded-2xl transition-all shadow-2xl border-4 border-[#00d9ff]"
+                  className="bg-gradient-to-br from-[#00d9ff] to-[#00a0c0] hover:from-[#00a0c0] hover:to-[#00d9ff] active:scale-95 text-black font-bold py-6 md:py-12 rounded-xl md:rounded-2xl transition-all shadow-2xl border-2 md:border-4 border-[#00d9ff]"
                 >
-                  <div className="text-5xl mb-3">🔔</div>
-                  <div className="text-2xl">HI HAT</div>
-                  <div className="text-lg opacity-75 mt-2">(Space)</div>
+                  <div className="text-3xl md:text-5xl mb-1 md:mb-3">🔔</div>
+                  <div className="text-base md:text-2xl">HI HAT</div>
+                  <div className="text-xs md:text-lg opacity-75 mt-1 md:mt-2">(Space)</div>
                 </button>
               </div>
             </div>
