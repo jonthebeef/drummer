@@ -53,18 +53,41 @@ All musical content is stored as data (not hard-coded), making it easy to add ne
    - `defaultTempoBpm`: Starting tempo (60-100 for beginners)
    - `steps`: Array of notes (see below)
 
-#### Understanding Steps
+#### Understanding Steps and Counting Pedagogy
 
-For **eighth notes** (8 steps per bar):
-- Steps 1-8 represent: "1 & 2 & 3 & 4 &"
+The app uses an **8-step grid** internally to represent one bar of music:
+- Steps 1-8 can represent: "1 & 2 & 3 & 4 &" (eighth notes)
 - Step 1 = beat 1, step 2 = the "&", step 3 = beat 2, etc.
 
-Example:
+**Important for beginners (Level 1):**
+- Early exercises use **quarter notes only** - students count "1 2 3 4"
+- Patterns place hits only on steps 1, 3, 5, 7 (the main beats)
+- The visual grid de-emphasizes the "and" steps (shown dimmed)
+- Only in lessons 9-10 do we introduce eighth notes ("1 & 2 & 3 & 4 &")
+
+This "quarters first, eighths later" approach helps absolute beginners focus on steady timing before subdividing.
+
+**Example quarter-note pattern:**
 ```typescript
 steps: [
-  { step: 1, countLabel: "1", hit: ["kick", "hihat"] },  // Kick + hi hat on beat 1
-  { step: 2, countLabel: "&", hit: ["hihat"] },          // Hi hat on the "&"
-  { step: 3, countLabel: "2", hit: ["snare", "hihat"] }, // Snare + hi hat on beat 2
+  { step: 1, countLabel: "1", hit: ["kick", "hihat"] },  // Beat 1
+  { step: 2, countLabel: "&", hit: [] },                 // Empty (not counted yet)
+  { step: 3, countLabel: "2", hit: ["snare", "hihat"] }, // Beat 2
+  { step: 4, countLabel: "&", hit: [] },                 // Empty
+  { step: 5, countLabel: "3", hit: ["hihat"] },          // Beat 3
+  { step: 6, countLabel: "&", hit: [] },                 // Empty
+  { step: 7, countLabel: "4", hit: ["hihat"] },          // Beat 4
+  { step: 8, countLabel: "&", hit: [] },                 // Empty
+]
+```
+
+**Example eighth-note pattern (later lessons):**
+```typescript
+steps: [
+  { step: 1, countLabel: "1", hit: ["kick", "hihat"] },
+  { step: 2, countLabel: "&", hit: ["hihat"] },          // Now we use the "&"
+  { step: 3, countLabel: "2", hit: ["snare", "hihat"] },
+  { step: 4, countLabel: "&", hit: ["hihat"] },
   // ... and so on
 ]
 ```
@@ -79,25 +102,47 @@ steps: [
    - `level`: Which level this belongs to (1, 2, 3...)
    - `type`: "groove", "fill", "timing", or "song"
    - `instructions`: Markdown text with clear, positive instructions
-   - `counting`: The counting guide (e.g., "1 & 2 & 3 & 4 &")
+   - `counting`: The counting guide shown in UI (e.g., "1 2 3 4" or "1 & 2 & 3 & 4 &")
+   - `countingMode`: Visual display mode - "quarters" (shows 1 2 3 4) or "eighths" (shows 1 & 2 & 3 & 4 &)
    - `tempoBpm`: Starting tempo for this exercise
    - `durationBars`: How many bars to loop (usually 4)
    - `patternId`: Reference a pattern by ID from `patterns.ts`
 
-Example:
+**Example quarter-note exercise (Level 1, lessons 1-8):**
+```typescript
+{
+  id: "level-1-ex-3",
+  title: "Snare on Every Beat",
+  level: 1,
+  type: "groove",
+  instructions: `
+Hit the snare drum four times: **1, 2, 3, 4**
+
+Keep it steady!
+  `,
+  counting: "1 2 3 4",
+  countingMode: "quarters",  // Hides "and" steps visually
+  tempoBpm: 53,
+  durationBars: 4,
+  patternId: "l1-snare-quarters",
+}
+```
+
+**Example eighth-note exercise (Level 1, lessons 9-10 onwards):**
 ```typescript
 {
   id: "level-2-ex-1",
-  title: "Your New Exercise",
+  title: "Your First Eighth Note Groove",
   level: 2,
   type: "groove",
   instructions: `
-This is a **new** exercise!
+Now we're counting **1 & 2 & 3 & 4 &**
 
 Try counting along while you play.
   `,
   counting: "1 & 2 & 3 & 4 &",
-  tempoBpm: 80,
+  countingMode: "eighths",  // Shows all steps including "and" beats
+  tempoBpm: 65,
   durationBars: 4,
   patternId: "boots-and-cats",
 }
@@ -156,12 +201,29 @@ drummer/
 
 ## Tips for Parents and Educators
 
+### Level 1 Pedagogy (Quarter Notes First!)
+
+Level 1 uses a carefully designed "quarters first, eighths later" approach:
+
+- **Lessons 1-8**: Students count **"1 2 3 4"** (quarter notes only)
+  - Visual grid dims the "and" beats to avoid confusion
+  - All drum hits happen only on the main beats (1, 2, 3, 4)
+  - Tempo stays very slow (50-60 BPM)
+
+- **Lessons 9-10**: Students learn **"1 & 2 & 3 & 4 &"** (introducing eighth notes)
+  - Visual grid now shows all 8 steps prominently
+  - The "and" beats are introduced with clear explanation
+  - Patterns start using hits on the "and" beats
+
+This progression prevents the common mistake of "jumping ahead" to subdivisions before students have internalized the steady pulse.
+
 ### Teaching Approach
 
 1. **Start slow** - It's better to play correctly at 60 BPM than messily at 120 BPM
 2. **One thing at a time** - Each exercise introduces only one new concept
-3. **Celebrate progress** - Mark exercises as done to track progress
-4. **Practice in short bursts** - 5-10 minutes per exercise is plenty
+3. **Count out loud** - Visual counting matches what students should say in their heads
+4. **Celebrate progress** - Stars earned unlock new exercises
+5. **Practice in short bursts** - 5-10 minutes per exercise is plenty
 
 ### Keyboard Controls
 
