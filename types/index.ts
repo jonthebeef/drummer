@@ -69,6 +69,13 @@ export interface Pattern {
 export type ExerciseType = "groove" | "fill" | "timing" | "song";
 
 /**
+ * Counting display mode for visual pedagogy
+ * - "quarters": Show only 1 2 3 4 (for beginner quarter-note lessons)
+ * - "eighths": Show 1 & 2 & 3 & 4 & (for eighth-note lessons)
+ */
+export type CountingMode = "quarters" | "eighths";
+
+/**
  * An exercise wraps a pattern (or inline pattern) into a learning step
  * with instructions, tempo, and duration
  */
@@ -79,6 +86,7 @@ export interface Exercise {
   type: ExerciseType;
   instructions: string;    // Markdown string with instructions for kid + parent
   counting: string;        // Counting guide like "1 & 2 & 3 & 4 &"
+  countingMode: CountingMode; // Visual display mode (quarters or eighths)
   tempoBpm: number;        // Starting tempo for this exercise
   durationBars: number;    // How many bars to practice (for looping)
 

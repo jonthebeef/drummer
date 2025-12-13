@@ -33,6 +33,7 @@ The metronome will click four times: **1, 2, 3, 4**. Try to tap exactly when you
 Don't worry about which drum - just feel that steady pulse!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes only - foundational timing
     tempoBpm: 50,
     durationBars: 4,
     patternId: "l1-counting",
@@ -56,6 +57,7 @@ The hi hat is the shimmery cymbal you play with your right hand (or left if you'
 Listen first, then try playing along. It's OK if you don't hit every beat perfectly - that will come with practice!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes - learning individual drums
     tempoBpm: 52,
     durationBars: 4,
     patternId: "l1-hihat-quarters",
@@ -79,6 +81,7 @@ The snare is the sharp, cracking sound. You play it with your left hand (or righ
 Keep it steady. If you miss a beat, don't stop - just keep going!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes - learning individual drums
     tempoBpm: 53,
     durationBars: 4,
     patternId: "l1-snare-quarters",
@@ -102,6 +105,7 @@ The kick makes that deep "boom" sound that you feel in your chest.
 On a real drum kit, you'd use your right foot on a pedal. For now, just press F!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes - learning individual drums
     tempoBpm: 54,
     durationBars: 4,
     patternId: "l1-kick-quarters",
@@ -127,6 +131,7 @@ So it goes:
 Start slow. Listen to the pattern first, then join in. You're doing great!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes - building coordination
     tempoBpm: 55,
     durationBars: 4,
     patternId: "l1-backbeat-intro",
@@ -150,6 +155,7 @@ So it goes:
 Beat 1 is called the **downbeat** - it's where the groove lands. Feel that solid thump at the start!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes - building coordination
     tempoBpm: 56,
     durationBars: 4,
     patternId: "l1-downbeat-intro",
@@ -176,6 +182,7 @@ So:
 This is a **real drum beat**! Take your time, and remember: steady wins!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes - first complete groove
     tempoBpm: 57,
     durationBars: 4,
     patternId: "l1-first-groove",
@@ -202,6 +209,7 @@ On a keyboard, press F and J together. On a drum kit, it's left hand and right f
 You've got this!
     `,
     counting: "1 2 3 4",
+    countingMode: "quarters", // Quarter notes - groove variation
     tempoBpm: 58,
     durationBars: 4,
     patternId: "l1-groove-variation",
@@ -229,6 +237,7 @@ Now we're going to play it **eight times** by adding the **"and"** in between ea
 This is called **eighth notes**. It sounds like a galloping horse! 🐴
     `,
     counting: "1 & 2 & 3 & 4 &",
+    countingMode: "eighths", // Eighth notes - introducing "and" beats
     tempoBpm: 59,
     durationBars: 4,
     patternId: "l1-hihat-eighths",
@@ -257,6 +266,7 @@ The kick on the **"and"** gives the beat that driving rock feel!
 This is the sound of real rock music. You're a drummer now! 🥁
     `,
     counting: "1 & 2 & 3 & 4 &",
+    countingMode: "eighths", // Eighth notes - first rock groove
     tempoBpm: 60,
     durationBars: 4,
     patternId: "l1-and-kick-groove",

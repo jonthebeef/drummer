@@ -10,13 +10,14 @@
  * - Provides visual feedback when user hits a drum correctly
  */
 
-import { Pattern, DrumType } from "@/types";
+import { Pattern, DrumType, CountingMode } from "@/types";
 
 interface DrumGridProps {
   pattern: Pattern;
   currentStep?: number;      // 0-indexed (0-7 for 8 steps), highlights this column
   userHit?: DrumType | null; // Which drum the user just hit (for visual feedback)
   showCounting?: boolean;    // Show counting labels above (1 & 2 & 3 & 4 &)
+  countingMode?: CountingMode; // Visual mode: "quarters" hides "and" steps, "eighths" shows all
   showKeyLegend?: boolean;   // Show keyboard shortcut legend below grid
   stepFeedback?: (step: number) => "correct" | "incorrect" | null; // Scoring feedback per step
 }
@@ -26,13 +27,25 @@ export default function DrumGrid({
   currentStep,
   userHit,
   showCounting = true,
+  countingMode = "eighths", // Default to showing all steps
   showKeyLegend = true,
   stepFeedback,
 }: DrumGridProps) {
   // Get the count label for a step (1, &, 2, &, etc.)
   const getCountLabel = (stepIndex: number): string => {
     const step = pattern.steps.find(s => s.step === stepIndex + 1);
+
+    // In quarters mode, hide "and" labels (steps 1, 3, 5, 7 which are odd indices)
+    if (countingMode === "quarters" && stepIndex % 2 === 1) {
+      return ""; // Hide the "&" labels
+    }
+
     return step?.countLabel || "";
+  };
+
+  // Check if a step is an "and" beat (for visual de-emphasis in quarters mode)
+  const isAndBeat = (stepIndex: number): boolean => {
+    return stepIndex % 2 === 1; // Steps 1, 3, 5, 7 are "and" beats
   };
 
   // Check if a drum hits on a specific step
@@ -98,6 +111,7 @@ export default function DrumGrid({
                 const isCurrent = currentStep === stepIndex;
                 const isCorrect = isCorrectHit(stepIndex, drum.type);
                 const feedback = stepFeedback ? stepFeedback(stepIndex) : null;
+                const isAndBeatInQuarters = countingMode === "quarters" && isAndBeat(stepIndex);
 
                 return (
                   <div
@@ -109,6 +123,7 @@ export default function DrumGrid({
                       ${isCurrent && !isHit ? "bg-zinc-900" : ""}
                       ${feedback === "correct" && isHit ? "bg-green-900 border-[#00ff88]" : ""}
                       ${feedback === "incorrect" && isHit ? "bg-red-900 border-[#ff1744]" : ""}
+                      ${isAndBeatInQuarters ? "opacity-30" : ""}
                     `}
                   >
                     {/* Drum hit circle */}

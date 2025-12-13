@@ -334,6 +334,7 @@ export default function ExerciseView({
                 currentStep={isPlaying ? currentStep : undefined}
                 userHit={null}
                 showCounting={true}
+                countingMode={exercise.countingMode}
               />
             </div>
           </div>
@@ -363,6 +364,7 @@ export default function ExerciseView({
                 currentStep={isPlaying ? currentStep : undefined}
                 userHit={currentHit}
                 showCounting={true}
+                countingMode={exercise.countingMode}
                 stepFeedback={getStepFeedback}
               />
             </div>
