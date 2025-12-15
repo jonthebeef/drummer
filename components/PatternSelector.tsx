@@ -23,20 +23,21 @@ export default function PatternSelector() {
   const [metronomeEnabled, setMetronomeEnabled] = useState(false);
 
   // Callback to play drum sounds when the step changes
-  const handleStepChange = useCallback((step: number) => {
-    // Play metronome click if enabled
+  // Uses lookahead scheduling - 'time' is when the audio should play
+  const handleStepChange = useCallback((step: number, time: number) => {
+    // Play metronome click if enabled (schedule at exact time)
     // For 8th note patterns (8 steps), quarter notes are on steps 0, 2, 4, 6
     if (metronomeEnabled && step % 2 === 0) {
       const isAccent = step === 0; // Accent beat 1
-      playMetronomeClick(isAccent);
+      playMetronomeClick(isAccent, time);
     }
 
     // Find which drums hit on this step (1-indexed in pattern data)
     const patternStep = selectedPattern.steps.find(s => s.step === step + 1);
     if (patternStep && patternStep.hit.length > 0) {
-      // Play all drums that hit on this step
+      // Play all drums that hit on this step (schedule at exact time)
       patternStep.hit.forEach(drum => {
-        playDrum(drum);
+        playDrum(drum, time);
       });
     }
   }, [selectedPattern, metronomeEnabled]);

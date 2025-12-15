@@ -14,10 +14,11 @@ import { DrumType } from "@/types";
 
 /**
  * Create an AudioContext (singleton pattern)
+ * Exported so the sequencer can access the audio clock for precise timing
  */
 let audioContext: AudioContext | null = null;
 
-function getAudioContext(): AudioContext {
+export function getAudioContext(): AudioContext {
   if (!audioContext) {
     audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
@@ -193,11 +194,13 @@ export function playDrum(drum: DrumType, time?: number) {
 /**
  * Play a metronome click
  * @param accent - If true, plays a higher pitched "accent" click (for beat 1)
+ * @param time - When to play it (in AudioContext time). If not provided, plays immediately.
  */
-export function playMetronomeClick(accent: boolean = false) {
+export function playMetronomeClick(accent: boolean = false, time?: number) {
   try {
     const context = getAudioContext();
-    generateMetronomeClick(context, context.currentTime, accent);
+    const playTime = time !== undefined ? time : context.currentTime;
+    generateMetronomeClick(context, playTime, accent);
   } catch (error) {
     console.error('Error playing metronome click:', error);
   }

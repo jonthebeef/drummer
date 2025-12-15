@@ -384,6 +384,76 @@ if (navigator.requestMIDIAccess) {
 
 ---
 
+## Future Ambitions (Post-V2, Optional)
+
+This section captures longer-term direction for the product. These are north stars, not commitments. None of these ideas are in active development, and they should only be pursued if the product proves useful and the value is clear.
+
+The app may eventually evolve from a local, self-contained learning tool into a lightly connected learning product for families. This evolution should be staged, optional, and value-driven.
+
+---
+
+### 1. Distributed Content (Not Yet Required)
+
+Lessons, patterns, and levels are currently data-driven and stored in the repo. This works well while content is relatively stable and single-author.
+
+In future, content could move to a database or headless CMS. This would enable:
+- Updating lessons without redeploying
+- Adding or adjusting levels dynamically
+- Scheduling content drops for returning users
+
+This is an enabler, not a goal. It only becomes valuable when content velocity or multiple contributors justify the infrastructure.
+
+---
+
+### 2. User Accounts Beyond Local Storage
+
+Current local accounts are intentional and privacy-first. They require no signup, no passwords, and no data leaves the device.
+
+In future, optional cloud-backed accounts could enable:
+- Progress syncing across devices (phone, tablet, laptop)
+- Parent dashboards showing what their child has achieved
+- Certificates and summaries tied to an email address
+
+If implemented, early versions should favour email-first or magic-link authentication, not passwords. Avoid committing to full authentication systems prematurely. Local-only accounts should always remain a valid option.
+
+---
+
+### 3. Progress, Certificates, and Summaries
+
+The app may later generate:
+- Level completion certificates (printable, shareable)
+- Weekly or milestone summaries (what was practised, what was achieved)
+- Gentle practice reminders (optional, parent-controlled)
+
+These should be computed by the app itself, not external tools. External services (email, PDF generation) are delivery mechanisms only. The app remains the source of truth for progress.
+
+---
+
+### 4. Email as a Support Channel (Not Marketing)
+
+If email is ever introduced, it should be framed as:
+- Reassurance for parents ("Your child completed Level 2 this week")
+- Celebration for kids ("You earned 3 stars on Rock Beat!")
+- Continuity between practice sessions ("Ready to try the next lesson?")
+
+Email is not for funnels, growth hacks, or gamification pressure. Personalisation should be explicit and data-driven (child's name, current level, recent achievements). Email tooling should not become a source of truth—it only reflects what the app already knows.
+
+---
+
+### 5. Product Principles for Future Expansion
+
+Any future expansion must:
+
+- **Preserve simplicity for children.** The core experience should remain playful, focused, and distraction-free. More features should not mean more complexity for the child.
+
+- **Avoid increasing operational burden for parents.** Parents should not need to manage accounts, moderate content, or troubleshoot infrastructure. The app should remain low-maintenance.
+
+- **Remain readable and tweakable by non-expert adults.** The codebase should stay simple enough that a parent with basic coding skills can add an exercise, adjust a tempo, or customise content for their child.
+
+- **Introduce infrastructure only when it unlocks clear learning or motivation value.** Databases, authentication, email systems, and external APIs all add complexity and maintenance burden. They should only be adopted when the benefit to learners is obvious and significant.
+
+---
+
 ## Notes
 
 - v1 is launchable Dec 15, 2025 for Seb's birthday

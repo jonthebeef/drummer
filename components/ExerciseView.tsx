@@ -55,21 +55,22 @@ export default function ExerciseView({
     );
   }
 
-  // Step change callback - plays drums and metronome
-  const handleStepChange = useCallback((step: number) => {
-    // Play metronome on quarter notes if enabled
+  // Step change callback - plays drums and metronome at scheduled time
+  // The sequencer uses lookahead scheduling, so 'time' is when the audio should play
+  const handleStepChange = useCallback((step: number, time: number) => {
+    // Play metronome on quarter notes if enabled (schedule at exact time)
     if (metronomeEnabled && step % 2 === 0) {
       const isAccent = step === 0; // Accent beat 1
-      playMetronomeClick(isAccent);
+      playMetronomeClick(isAccent, time);
     }
 
     // Find which drums hit on this step
     const patternStep = pattern.steps.find(s => s.step === step + 1);
 
-    // In LISTEN mode, auto-play the drums
+    // In LISTEN mode, auto-play the drums (schedule at exact time)
     if (lessonState === "LISTEN" && patternStep && patternStep.hit.length > 0) {
       patternStep.hit.forEach(drum => {
-        playDrum(drum);
+        playDrum(drum, time);
       });
     }
   }, [pattern, lessonState, metronomeEnabled]);

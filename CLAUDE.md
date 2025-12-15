@@ -52,6 +52,7 @@ The app separates musical content from UI completely:
    - Specifies tempo, duration, counting guide
    - Type: "groove", "fill", "timing", or "song"
    - Level 1 tempos: 50→52→53→54→55→56→57→58→59→60 BPM (very gradual)
+   - `countingMode`: "quarters" or "eighths" (see Pedagogy section below)
 
 3. **Levels** (`data/levels.ts`) - Groups of exercises in sequence
    - Simple arrays of exercise IDs
@@ -192,9 +193,10 @@ app/
 └── patterns/page.tsx (pattern browser)
 
 components/
-├── DrumGrid.tsx (visual pattern display)
+├── DrumGrid.tsx (visual pattern display, respects countingMode)
 ├── LevelMap.tsx (level selection with stars/locking)
-├── ExerciseView.tsx (full exercise player)
+├── ExerciseView.tsx (full exercise player, mobile fullscreen mode)
+├── RotatePrompt.tsx (prompts mobile users to rotate to landscape)
 ├── TransportControls.tsx (play/pause/tempo/metronome)
 └── PracticeControls.tsx (listen/tap mode + mobile buttons)
 ```
@@ -215,14 +217,48 @@ components/
    - Already wired into play buttons and drum input
 
 4. **Mobile Considerations**:
-   - Homepage drum demo hidden on mobile (not responsive yet)
+   - **Landscape-only gameplay**: `RotatePrompt` component prompts users to rotate phone
+   - **Fullscreen immersive mode**: During LISTEN/PRACTICE states on mobile:
+     - Header is hidden
+     - Content fills entire viewport (no padding/browser chrome)
+     - Slim top bar with progress/BPM only
    - Tap buttons always visible in "tap along" mode
    - Keyboard shortcuts work alongside tap buttons
+   - Desktop layout unchanged (header always visible)
 
 5. **Learning Progression**:
    - Level 1 tempos stay in 50s (50-60 BPM max)
    - 4 listen loops before practice phase
    - One concept per exercise
+
+## Pedagogy: Quarters-First Approach
+
+The app teaches counting in stages, matching how kids naturally learn:
+
+### Counting Modes
+
+**`countingMode: "quarters"`** (Lessons 1-8):
+- Grid only shows "1 2 3 4" labels (hides "&" symbols)
+- "And" beat columns dimmed to 30% opacity
+- All hits land on quarter notes only (steps 1, 3, 5, 7)
+- Kids count "1, 2, 3, 4" in their heads
+
+**`countingMode: "eighths"`** (Lessons 9-10):
+- Full grid with "1 & 2 & 3 & 4 &" labels
+- All 8 columns shown at full opacity
+- Introduces hits on "and" beats
+- Kids learn to count "1 and 2 and 3 and 4 and"
+
+### Why This Matters
+
+This mirrors real drum teaching: you don't teach eighth notes on day one. The visual grid reinforces what the child counts in their head, making transfer to a real drum kit easier.
+
+### Technical Implementation
+
+- `types/index.ts`: `CountingMode = "quarters" | "eighths"`
+- `DrumGrid.tsx`: Accepts `countingMode` prop, dims/hides "&" columns in quarters mode
+- `ExerciseView.tsx`: Passes `countingMode` from exercise data to DrumGrid
+- Sequencer timing unchanged (always 8 steps internally)
 
 ## Analytics (PostHog)
 
@@ -252,8 +288,12 @@ Privacy-first analytics with GDPR-compliant consent management.
 
 ## Future Development Notes
 
-Currently v1 for Seb's birthday. Planned expansions:
+Currently v1 for Seb's birthday. See `V2_ROADMAP.md` for detailed plans.
+
+Planned expansions:
 - More levels (fills, dynamics, timing exercises)
-- Better mobile responsive design for DrumGrid
+- Portrait mode support for mobile (currently landscape-only)
 - Accuracy scoring refinements
 - Better onboarding for Matilda (age 6) - simpler exercises
+
+Known issues documented in `MOBILE_ISSUES.md`.

@@ -1,26 +1,37 @@
 /**
- * useSequencer Hook
+ * useSequencer Hook - Lookahead Scheduler
  *
- * This hook handles the timing and playback of drum patterns.
- * It keeps track of which step we're on and triggers updates at the right tempo.
+ * This hook handles precise timing for drum pattern playback using the
+ * Web Audio API's high-resolution clock and lookahead scheduling.
  *
  * How it works:
- * - Uses requestAnimationFrame for smooth, accurate timing
- * - Calculates when each step should happen based on BPM
- * - Loops continuously through all steps
- * - Provides play/pause controls and current step index
+ * - Uses the AudioContext clock (not requestAnimationFrame) for timing
+ * - Schedules audio events 100ms ahead for sample-accurate playback
+ * - Visual updates are scheduled via setTimeout to sync with audio
+ * - This ensures audio and visuals are perfectly synchronized
+ *
+ * Why lookahead scheduling?
+ * - requestAnimationFrame is tied to screen refresh (~16ms at 60fps)
+ * - JavaScript timers are not precise enough for music
+ * - Web Audio's scheduling is sample-accurate when scheduled ahead
+ * - This is how DAWs, rhythm games, and music apps handle timing
  */
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { getAudioContext } from "@/utils/drumSynth";
+
+// Timing constants (in seconds)
+const LOOKAHEAD = 0.1;         // Schedule 100ms ahead
+const SCHEDULE_INTERVAL = 25;  // Run scheduler every 25ms
 
 interface UseSequencerProps {
-  totalSteps: number;     // Usually 8 for eighth notes, 16 for sixteenth notes
+  totalSteps: number;     // Usually 8 for eighth notes
   initialBpm: number;     // Starting tempo
-  onStepChange?: (step: number) => void;  // Callback when step changes
+  onStepChange?: (step: number, time: number) => void;  // Callback with scheduled time
 }
 
 interface UseSequencerReturn {
-  currentStep: number;    // Current step (0-indexed, so 0-7 for 8 steps)
+  currentStep: number;    // Current step for visual display (0-indexed)
   isPlaying: boolean;
   bpm: number;
   play: () => void;
@@ -35,84 +46,115 @@ export function useSequencer({
   initialBpm,
   onStepChange,
 }: UseSequencerProps): UseSequencerReturn {
+  // Visual state (updated via setTimeout to sync with scheduled audio)
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpmState] = useState(initialBpm);
 
-  // Refs to track timing without causing re-renders
-  const startTimeRef = useRef<number>(0);
-  const lastStepTimeRef = useRef<number>(0);
-  const animationFrameRef = useRef<number>(0);
+  // Refs for scheduler state (don't trigger re-renders)
+  const nextStepTimeRef = useRef<number>(0);      // When the next step should play (audio time)
+  const schedulerStepRef = useRef<number>(0);     // Which step the scheduler is on
+  const schedulerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const bpmRef = useRef(initialBpm);              // Current BPM for scheduler
+  const onStepChangeRef = useRef(onStepChange);   // Callback ref to avoid stale closures
+
+  // Keep refs in sync with state/props
+  useEffect(() => {
+    bpmRef.current = bpm;
+  }, [bpm]);
+
+  useEffect(() => {
+    onStepChangeRef.current = onStepChange;
+  }, [onStepChange]);
 
   /**
-   * Calculate how long each step should take in milliseconds
-   * For 8th notes at 120 BPM:
-   * - 120 beats per minute = 2 beats per second
-   * - 1 beat = 2 eighth notes
-   * - So 4 eighth notes per second
-   * - Each eighth note = 250ms
+   * Calculate step duration in seconds
+   * For 8th notes at 60 BPM:
+   * - 60 quarter notes per minute = 1 quarter note per second
+   * - 1 eighth note = 0.5 seconds
    */
-  const getStepDuration = useCallback((currentBpm: number) => {
-    // For 8th notes: one quarter note = 60000/bpm ms, one 8th note = half that
-    // For 8 steps per bar (2 eighths per beat * 4 beats), each step is 1 eighth note
-    const millisecondsPerBeat = 60000 / currentBpm;
-    const millisecondsPerEighthNote = millisecondsPerBeat / 2;
-    return millisecondsPerEighthNote;
+  const getStepDuration = useCallback((currentBpm: number): number => {
+    const secondsPerBeat = 60 / currentBpm;
+    const secondsPerEighthNote = secondsPerBeat / 2;
+    return secondsPerEighthNote;
   }, []);
 
   /**
-   * The main sequencer loop
-   * Checks if enough time has passed to move to the next step
+   * The lookahead scheduler
+   * Runs every SCHEDULE_INTERVAL ms and schedules any events
+   * that fall within the LOOKAHEAD window
    */
-  const tick = useCallback((timestamp: number) => {
-    if (!startTimeRef.current) {
-      startTimeRef.current = timestamp;
-      lastStepTimeRef.current = timestamp;
-    }
+  const scheduler = useCallback(() => {
+    const audioContext = getAudioContext();
+    const stepDuration = getStepDuration(bpmRef.current);
+    const currentTime = audioContext.currentTime;
 
-    const elapsed = timestamp - lastStepTimeRef.current;
-    const stepDuration = getStepDuration(bpm);
+    // Schedule all steps that fall within the lookahead window
+    while (nextStepTimeRef.current < currentTime + LOOKAHEAD) {
+      const step = schedulerStepRef.current;
+      const scheduledTime = nextStepTimeRef.current;
 
-    // Time to move to next step?
-    if (elapsed >= stepDuration) {
-      setCurrentStep((prevStep) => {
-        const nextStep = (prevStep + 1) % totalSteps;
-
-        // Trigger callback
-        if (onStepChange) {
-          onStepChange(nextStep);
+      // Only schedule if the time is in the future (or very close to now)
+      // This prevents scheduling sounds in the past on first run
+      if (scheduledTime >= currentTime - 0.01) {
+        // Schedule audio via callback (pass the exact time for Web Audio scheduling)
+        if (onStepChangeRef.current) {
+          onStepChangeRef.current(step, scheduledTime);
         }
 
-        return nextStep;
-      });
+        // Schedule visual update to happen when audio plays
+        // Calculate delay from now until scheduled time
+        const delayMs = Math.max(0, (scheduledTime - currentTime) * 1000);
 
-      // Update last step time (accounting for any drift)
-      lastStepTimeRef.current = timestamp;
+        // Capture step value for the timeout closure
+        const stepToShow = step;
+        setTimeout(() => {
+          setCurrentStep(stepToShow);
+        }, delayMs);
+      }
+
+      // Advance to next step
+      nextStepTimeRef.current += stepDuration;
+      schedulerStepRef.current = (schedulerStepRef.current + 1) % totalSteps;
     }
-
-    // Keep the loop going
-    animationFrameRef.current = requestAnimationFrame(tick);
-  }, [bpm, totalSteps, getStepDuration, onStepChange]);
+  }, [totalSteps, getStepDuration]);
 
   /**
    * Start playback
    */
   const play = useCallback(() => {
-    if (!isPlaying) {
-      setIsPlaying(true);
-      startTimeRef.current = 0; // Reset timing
-      animationFrameRef.current = requestAnimationFrame(tick);
+    if (isPlaying) return;
+
+    const audioContext = getAudioContext();
+
+    // Resume audio context if suspended (required after user interaction)
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
     }
-  }, [isPlaying, tick]);
+
+    // Start from current step, scheduling from "now"
+    // Add a tiny offset so first note isn't in the past
+    nextStepTimeRef.current = audioContext.currentTime + 0.05;
+    schedulerStepRef.current = currentStep;
+
+    // Start the scheduler loop
+    schedulerIntervalRef.current = setInterval(scheduler, SCHEDULE_INTERVAL);
+
+    // Run scheduler immediately to queue up first notes
+    scheduler();
+
+    setIsPlaying(true);
+  }, [isPlaying, currentStep, scheduler]);
 
   /**
    * Pause playback (keeps current position)
    */
   const pause = useCallback(() => {
-    setIsPlaying(false);
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
+    if (schedulerIntervalRef.current) {
+      clearInterval(schedulerIntervalRef.current);
+      schedulerIntervalRef.current = null;
     }
+    setIsPlaying(false);
   }, []);
 
   /**
@@ -121,15 +163,13 @@ export function useSequencer({
   const stop = useCallback(() => {
     pause();
     setCurrentStep(0);
-    startTimeRef.current = 0;
-    lastStepTimeRef.current = 0;
+    schedulerStepRef.current = 0;
   }, [pause]);
 
   /**
-   * Set BPM
+   * Set BPM (clamped to 40-200)
    */
   const setBpm = useCallback((newBpm: number) => {
-    // Clamp BPM to reasonable range
     const clampedBpm = Math.max(40, Math.min(200, newBpm));
     setBpmState(clampedBpm);
   }, []);
@@ -140,18 +180,16 @@ export function useSequencer({
   const setStep = useCallback((step: number) => {
     const clampedStep = Math.max(0, Math.min(totalSteps - 1, step));
     setCurrentStep(clampedStep);
-    // Reset timing
-    startTimeRef.current = 0;
-    lastStepTimeRef.current = 0;
+    schedulerStepRef.current = clampedStep;
   }, [totalSteps]);
 
   /**
-   * Cleanup: cancel animation frame when component unmounts
+   * Cleanup: stop scheduler when component unmounts
    */
   useEffect(() => {
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+      if (schedulerIntervalRef.current) {
+        clearInterval(schedulerIntervalRef.current);
       }
     };
   }, []);
