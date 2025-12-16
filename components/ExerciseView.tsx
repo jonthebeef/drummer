@@ -268,8 +268,10 @@ export default function ExerciseView({
         {/* READY STATE - Big Start Button */}
         {lessonState === "READY" && (
           <>
-            {/* MOBILE LANDSCAPE: Side-by-side layout */}
-            <div className="lg:hidden landscape:flex landscape:gap-4 landscape:items-start portrait:space-y-6">
+            {/* MOBILE: Side-by-side in landscape, stacked in portrait */}
+            {/* Wrapper ensures this is hidden on desktop (lg+) */}
+            <div className="lg:hidden">
+              <div className="flex flex-col landscape:flex-row landscape:gap-4 landscape:items-start gap-6">
               {/* Left: Instructions (compact) */}
               <div className="landscape:flex-1 landscape:max-h-[calc(100vh-120px)] landscape:overflow-y-auto">
                 <div className="bg-zinc-900 rounded-xl border-2 border-[#00d9ff] p-4 shadow-2xl">
@@ -301,6 +303,7 @@ export default function ExerciseView({
                     {exercise.counting}
                   </div>
                 </div>
+              </div>
               </div>
             </div>
 
@@ -527,6 +530,7 @@ export default function ExerciseView({
                     showCounting={true}
                     countingMode={exercise.countingMode}
                     stepFeedback={getStepFeedback}
+                    showKeyLegend={false}
                   />
                 </div>
 
