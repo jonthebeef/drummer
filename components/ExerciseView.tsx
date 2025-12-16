@@ -454,7 +454,7 @@ export default function ExerciseView({
             </div>
 
             {/* DESKTOP: Original layout */}
-            <div className="hidden lg:block space-y-6">
+            <div className="hidden lg:block space-y-6 max-w-6xl mx-auto px-4 py-8">
               {/* Banner */}
               <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black text-center py-6 rounded-2xl shadow-2xl border-4 border-[#00d9ff]">
                 <div className="text-4xl font-bold mb-2">👂 WATCH & LISTEN</div>
@@ -548,8 +548,8 @@ export default function ExerciseView({
               </div>
             </div>
 
-            {/* DESKTOP: Original layout (≥ 768px) */}
-            <div className="hidden lg:block space-y-6">
+            {/* DESKTOP: Original layout (≥ 1024px) */}
+            <div className="hidden lg:block space-y-6 max-w-6xl mx-auto px-4 py-8">
               {/* Banner with progress */}
               <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black rounded-2xl shadow-2xl p-6 border-4 border-[#ff9100]">
                 <div className="flex items-center justify-between mb-4">
