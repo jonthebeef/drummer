@@ -112,28 +112,86 @@ export default function ExerciseView({
   const [perfectHit, setPerfectHit] = useState<{ step: number; drum: DrumType } | null>(null);
   const stepStartTimeRef = useRef(0);
 
+  // Combo/streak tracking
+  const [comboCount, setComboCount] = useState(0);
+  const [showComboMessage, setShowComboMessage] = useState(false);
+  const [comboMessage, setComboMessage] = useState("");
+  const lastHitStepRef = useRef(-1);
+
   // Track when each step starts (for perfect hit detection)
   useEffect(() => {
     stepStartTimeRef.current = performance.now();
-  }, [currentStep]);
+
+    // Reset combo if we move to a new step without hitting the previous one
+    if (lessonState === "PRACTICE" && isPlaying) {
+      const prevStep = currentStep === 0 ? pattern.steps.length - 1 : currentStep - 1;
+      const prevStepData = pattern.steps.find(s => s.step === prevStep + 1);
+
+      // If previous step had drums to hit and we didn't hit it, reset combo
+      if (prevStepData && prevStepData.hit.length > 0 && lastHitStepRef.current !== prevStep) {
+        setComboCount(0);
+      }
+    }
+  }, [currentStep, lessonState, isPlaying, pattern.steps]);
+
+  // Reset combo when entering practice mode
+  useEffect(() => {
+    if (lessonState === "PRACTICE") {
+      setComboCount(0);
+      lastHitStepRef.current = -1;
+    }
+  }, [lessonState]);
+
+  // Get motivational message based on combo count
+  const getComboMessage = (combo: number): string => {
+    if (combo >= 20) return "UNSTOPPABLE! 🔥🔥🔥";
+    if (combo >= 15) return "ON FIRE! 🔥🔥";
+    if (combo >= 10) return "COOKING! 🔥";
+    if (combo >= 7) return "AWESOME! ⭐";
+    if (combo >= 5) return "GREAT! ✨";
+    if (combo >= 3) return "NICE! 👍";
+    return "";
+  };
 
   // When user hits a drum in practice mode, record it for scoring and check for perfect hit
   useEffect(() => {
     if (currentHit && lessonState === "PRACTICE") {
       recordHit(currentHit);
 
-      // Check if this is a perfect hit (within 100ms of step start)
+      // Check if this is a perfect hit (within 150ms of step start - slightly more generous)
       const timeSinceStepStart = performance.now() - stepStartTimeRef.current;
       const patternStep = pattern.steps.find(s => s.step === currentStep + 1);
       const isExpectedDrum = patternStep?.hit.includes(currentHit);
 
-      if (isExpectedDrum && timeSinceStepStart < 100) {
+      if (isExpectedDrum && timeSinceStepStart < 150) {
         // Perfect hit! Show explosion
         setPerfectHit({ step: currentStep, drum: currentHit });
-        setTimeout(() => setPerfectHit(null), 400); // Clear after animation
+        setTimeout(() => setPerfectHit(null), 500);
+
+        // Track this hit
+        lastHitStepRef.current = currentStep;
+
+        // Increment combo
+        const newCombo = comboCount + 1;
+        setComboCount(newCombo);
+
+        // Show motivational message at milestones
+        if (newCombo >= 3 && newCombo % 2 === 1) {
+          const message = getComboMessage(newCombo);
+          setComboMessage(message);
+          setShowComboMessage(true);
+          setTimeout(() => setShowComboMessage(false), 1500);
+        }
+      } else if (isExpectedDrum) {
+        // Hit was correct but not perfect - maintain combo but don't increment
+        lastHitStepRef.current = currentStep;
+      } else {
+        // Wrong drum - reset combo
+        setComboCount(0);
+        lastHitStepRef.current = -1;
       }
     }
-  }, [currentHit, lessonState, recordHit, currentStep, pattern.steps]);
+  }, [currentHit, lessonState, recordHit, currentStep, pattern.steps, comboCount]);
 
   // Keyboard shortcuts: Arrow keys for tempo, 'M' for metronome
   useEffect(() => {
@@ -512,11 +570,27 @@ export default function ExerciseView({
                     />
                   </div>
                 </div>
+                {/* Combo counter */}
+                {comboCount >= 3 && (
+                  <div className="flex items-center gap-1 px-3 py-1 bg-yellow-400 rounded-full animate-pulse">
+                    <span className="text-lg font-black">{comboCount}x</span>
+                    <span className="text-sm">COMBO</span>
+                  </div>
+                )}
                 <div className="text-sm font-bold flex items-center gap-2">
                   <span>{bpm}</span>
                   <span>{isPlaying ? "▶" : "⏸"}</span>
                 </div>
               </div>
+
+              {/* Motivational message overlay */}
+              {showComboMessage && (
+                <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
+                  <div className="text-6xl font-black text-yellow-400 animate-bounce drop-shadow-[0_0_30px_rgba(250,204,21,1)]">
+                    {comboMessage}
+                  </div>
+                </div>
+              )}
 
               {/* 3-column game layout: Left buttons | Grid | Right button */}
               <div className="flex-1 grid grid-cols-[80px_1fr_80px] gap-2 p-2">
@@ -570,11 +644,26 @@ export default function ExerciseView({
             </div>
 
             {/* DESKTOP: Original layout (≥ 1024px) */}
-            <div className="hidden lg:block space-y-6 max-w-6xl mx-auto px-4 py-8">
+            <div className="hidden lg:block space-y-6 max-w-6xl mx-auto px-4 py-8 relative">
+              {/* Motivational message overlay (desktop) */}
+              {showComboMessage && (
+                <div className="fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
+                  <div className="text-8xl font-black text-yellow-400 animate-bounce drop-shadow-[0_0_50px_rgba(250,204,21,1)]">
+                    {comboMessage}
+                  </div>
+                </div>
+              )}
+
               {/* Banner with progress */}
               <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black rounded-2xl shadow-2xl p-6 border-4 border-[#ff9100]">
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-4xl font-bold">🥁 YOU'RE ROCKING!</div>
+                  {comboCount >= 3 && (
+                    <div className="flex items-center gap-2 px-6 py-3 bg-yellow-400 rounded-full animate-pulse shadow-2xl">
+                      <span className="text-4xl font-black">{comboCount}x</span>
+                      <span className="text-2xl font-bold">COMBO!</span>
+                    </div>
+                  )}
                   <div className="text-3xl font-bold">Loop {loopsCompleted + 1} / 4</div>
                 </div>
                 <div className="w-full bg-black bg-opacity-30 rounded-full h-5 border-2 border-black">

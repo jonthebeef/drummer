@@ -130,18 +130,33 @@ export default function DrumGrid({
                       ${isPerfect ? "bg-yellow-400/20" : ""}
                     `}
                   >
-                    {/* Perfect hit explosion effect */}
+                    {/* Perfect hit MEGA explosion effect - Guitar Hero style! */}
                     {isPerfect && (
                       <>
-                        {/* Outer burst */}
-                        <div className="absolute inset-0 rounded-lg animate-ping bg-yellow-400/40" />
-                        {/* Inner flash */}
-                        <div className="absolute inset-0 rounded-lg animate-pulse bg-white/30" />
-                        {/* Particles */}
-                        <div className="absolute top-0 left-1/2 w-2 h-2 bg-yellow-300 rounded-full animate-bounce" />
-                        <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                        <div className="absolute left-0 top-1/2 w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                        <div className="absolute right-0 top-1/2 w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
+                        {/* Multiple expanding rings */}
+                        <div className="absolute inset-0 rounded-lg animate-ping bg-yellow-400/60" />
+                        <div className="absolute inset-0 rounded-lg animate-ping bg-orange-400/40" style={{ animationDelay: '0.1s' }} />
+                        <div className="absolute inset-0 rounded-lg animate-ping bg-red-400/30" style={{ animationDelay: '0.2s' }} />
+
+                        {/* Bright center flash */}
+                        <div className="absolute inset-0 rounded-lg bg-white/50 animate-pulse" />
+
+                        {/* Large particles in 8 directions */}
+                        <div className="absolute top-0 left-1/2 w-3 h-3 bg-yellow-300 rounded-full animate-bounce shadow-lg shadow-yellow-400" />
+                        <div className="absolute bottom-0 left-1/2 w-3 h-3 bg-yellow-300 rounded-full animate-bounce shadow-lg shadow-yellow-400" style={{ animationDelay: '0.05s' }} />
+                        <div className="absolute left-0 top-1/2 w-3 h-3 bg-orange-400 rounded-full animate-bounce shadow-lg shadow-orange-400" style={{ animationDelay: '0.1s' }} />
+                        <div className="absolute right-0 top-1/2 w-3 h-3 bg-orange-400 rounded-full animate-bounce shadow-lg shadow-orange-400" style={{ animationDelay: '0.15s' }} />
+
+                        {/* Diagonal particles */}
+                        <div className="absolute top-0 left-0 w-2 h-2 bg-red-400 rounded-full animate-ping" />
+                        <div className="absolute top-0 right-0 w-2 h-2 bg-red-400 rounded-full animate-ping" style={{ animationDelay: '0.1s' }} />
+                        <div className="absolute bottom-0 left-0 w-2 h-2 bg-pink-400 rounded-full animate-ping" style={{ animationDelay: '0.2s' }} />
+                        <div className="absolute bottom-0 right-0 w-2 h-2 bg-pink-400 rounded-full animate-ping" style={{ animationDelay: '0.3s' }} />
+
+                        {/* Star burst effect */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-4xl animate-spin">✨</div>
+                        </div>
                       </>
                     )}
 
