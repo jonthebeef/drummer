@@ -116,7 +116,9 @@ export default function ExerciseView({
   const [comboCount, setComboCount] = useState(0);
   const [showComboMessage, setShowComboMessage] = useState(false);
   const [comboMessage, setComboMessage] = useState("");
+  const [messageIntensity, setMessageIntensity] = useState(1); // Scale 1-5
   const lastHitStepRef = useRef(-1);
+  const comboBonus = useRef(0); // Bonus points from combos
 
   // Track when each step starts (for perfect hit detection)
   useEffect(() => {
@@ -139,18 +141,20 @@ export default function ExerciseView({
     if (lessonState === "PRACTICE") {
       setComboCount(0);
       lastHitStepRef.current = -1;
+      comboBonus.current = 0;
     }
   }, [lessonState]);
 
-  // Get motivational message based on combo count
-  const getComboMessage = (combo: number): string => {
-    if (combo >= 20) return "UNSTOPPABLE! 🔥🔥🔥";
-    if (combo >= 15) return "ON FIRE! 🔥🔥";
-    if (combo >= 10) return "COOKING! 🔥";
-    if (combo >= 7) return "AWESOME! ⭐";
-    if (combo >= 5) return "GREAT! ✨";
-    if (combo >= 3) return "NICE! 👍";
-    return "";
+  // Get motivational message and intensity based on combo count
+  const getComboFeedback = (combo: number): { message: string; intensity: number } => {
+    if (combo >= 20) return { message: "UNSTOPPABLE! 🔥🔥🔥", intensity: 5 };
+    if (combo >= 15) return { message: "ON FIRE! 🔥🔥", intensity: 5 };
+    if (combo >= 10) return { message: "COOKING! 🔥", intensity: 4 };
+    if (combo >= 7) return { message: "AWESOME! ⭐", intensity: 3 };
+    if (combo >= 5) return { message: "GREAT! ✨", intensity: 3 };
+    if (combo >= 3) return { message: "NICE! 👍", intensity: 2 };
+    if (combo >= 2) return { message: "GOOD! 💚", intensity: 1 };
+    return { message: "HIT! ✓", intensity: 1 };
   };
 
   // When user hits a drum in practice mode, record it for scoring and check for perfect hit
@@ -175,13 +179,20 @@ export default function ExerciseView({
         const newCombo = comboCount + 1;
         setComboCount(newCombo);
 
-        // Show motivational message at milestones
-        if (newCombo >= 3 && newCombo % 2 === 1) {
-          const message = getComboMessage(newCombo);
-          setComboMessage(message);
-          setShowComboMessage(true);
-          setTimeout(() => setShowComboMessage(false), 1500);
+        // Add combo bonus points (each perfect hit after 5 gives bonus)
+        if (newCombo >= 5) {
+          comboBonus.current += Math.floor(newCombo / 5); // Bonus scales with combo
         }
+
+        // Show motivational message on EVERY perfect hit (escalating intensity)
+        const feedback = getComboFeedback(newCombo);
+        setComboMessage(feedback.message);
+        setMessageIntensity(feedback.intensity);
+        setShowComboMessage(true);
+
+        // Duration scales with intensity
+        const duration = 600 + (feedback.intensity * 200); // 800ms to 1600ms
+        setTimeout(() => setShowComboMessage(false), duration);
       } else if (isExpectedDrum) {
         // Hit was correct but not perfect - maintain combo but don't increment
         lastHitStepRef.current = currentStep;
@@ -291,12 +302,23 @@ export default function ExerciseView({
   // Save progress and return to level map
   const handleContinue = useCallback(() => {
     const result = getScoringResult();
-    if (result && result.stars > 0) {
-      console.log(`Saving progress for ${exercise.id}: ${result.stars} stars, ${result.accuracy}% accuracy`);
-      saveExerciseProgress(exercise.id, result.stars, result.accuracy);
-      console.log(`Progress saved successfully`);
-    } else {
-      console.warn(`No progress to save - result:`, result);
+    if (result) {
+      // Apply combo bonus to accuracy (each bonus point = 1% extra)
+      const bonusAccuracy = Math.min(result.accuracy + comboBonus.current, 100);
+
+      // Recalculate stars with bonus accuracy
+      let finalStars = result.stars;
+      if (bonusAccuracy >= 90) finalStars = 3;
+      else if (bonusAccuracy >= 70) finalStars = 2;
+      else if (bonusAccuracy >= 50) finalStars = 1;
+
+      if (finalStars > 0) {
+        console.log(`Saving progress for ${exercise.id}: ${finalStars} stars, ${bonusAccuracy}% accuracy (base: ${result.accuracy}%, combo bonus: +${comboBonus.current}%)`);
+        saveExerciseProgress(exercise.id, finalStars, bonusAccuracy);
+        console.log(`Progress saved successfully`);
+      } else {
+        console.warn(`No progress to save - result:`, result);
+      }
     }
     if (onComplete) {
       onComplete();
@@ -583,10 +605,19 @@ export default function ExerciseView({
                 </div>
               </div>
 
-              {/* Motivational message overlay */}
+              {/* Motivational message overlay - FIXED positioning to prevent layout shift */}
               {showComboMessage && (
-                <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
-                  <div className="text-6xl font-black text-yellow-400 animate-bounce drop-shadow-[0_0_30px_rgba(250,204,21,1)]">
+                <div className="fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[100] pointer-events-none">
+                  <div
+                    className={`
+                      font-black text-yellow-400 drop-shadow-[0_0_30px_rgba(250,204,21,1)]
+                      ${messageIntensity === 1 ? 'text-3xl' : ''}
+                      ${messageIntensity === 2 ? 'text-4xl animate-pulse' : ''}
+                      ${messageIntensity === 3 ? 'text-5xl animate-bounce' : ''}
+                      ${messageIntensity === 4 ? 'text-6xl animate-bounce drop-shadow-[0_0_50px_rgba(250,204,21,1)]' : ''}
+                      ${messageIntensity === 5 ? 'text-7xl animate-bounce drop-shadow-[0_0_70px_rgba(250,204,21,1)]' : ''}
+                    `}
+                  >
                     {comboMessage}
                   </div>
                 </div>
@@ -644,11 +675,20 @@ export default function ExerciseView({
             </div>
 
             {/* DESKTOP: Original layout (≥ 1024px) */}
-            <div className="hidden lg:block space-y-6 max-w-6xl mx-auto px-4 py-8 relative">
-              {/* Motivational message overlay (desktop) */}
+            <div className="hidden lg:block space-y-6 max-w-6xl mx-auto px-4 py-8">
+              {/* Motivational message overlay (desktop) - FIXED positioning to prevent layout shift */}
               {showComboMessage && (
-                <div className="fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
-                  <div className="text-8xl font-black text-yellow-400 animate-bounce drop-shadow-[0_0_50px_rgba(250,204,21,1)]">
+                <div className="fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[100] pointer-events-none">
+                  <div
+                    className={`
+                      font-black text-yellow-400
+                      ${messageIntensity === 1 ? 'text-4xl' : ''}
+                      ${messageIntensity === 2 ? 'text-5xl animate-pulse drop-shadow-[0_0_30px_rgba(250,204,21,1)]' : ''}
+                      ${messageIntensity === 3 ? 'text-6xl animate-bounce drop-shadow-[0_0_40px_rgba(250,204,21,1)]' : ''}
+                      ${messageIntensity === 4 ? 'text-7xl animate-bounce drop-shadow-[0_0_50px_rgba(250,204,21,1)]' : ''}
+                      ${messageIntensity === 5 ? 'text-8xl animate-bounce drop-shadow-[0_0_70px_rgba(250,204,21,1)]' : ''}
+                    `}
+                  >
                     {comboMessage}
                   </div>
                 </div>
