@@ -346,7 +346,7 @@ export default function ExerciseView({
         {(lessonState === "COUNTDOWN_LISTEN" || lessonState === "COUNTDOWN_PRACTICE") && (
           <>
             {/* MOBILE LANDSCAPE: Fullscreen immersive countdown */}
-            <div className="lg:hidden fixed inset-0 bg-black flex items-center justify-center z-50">
+            <div className="lg:hidden fixed inset-0 bg-black flex items-center justify-center z-50 pt-safe pb-safe">
               <div className="text-center">
                 {countdown > 0 ? (
                   <>
@@ -395,7 +395,7 @@ export default function ExerciseView({
         {lessonState === "LISTEN" && (
           <>
             {/* MOBILE LANDSCAPE: Fullscreen game mode with dimmed buttons */}
-            <div className="lg:hidden fixed inset-0 bg-black flex flex-col">
+            <div className="lg:hidden fixed inset-0 bg-black flex flex-col pt-safe">
               {/* Slim top bar */}
               <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black px-4 py-2 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-2">
@@ -476,7 +476,7 @@ export default function ExerciseView({
         {lessonState === "PRACTICE" && (
           <>
             {/* MOBILE LANDSCAPE: Fullscreen game mode */}
-            <div className="lg:hidden fixed inset-0 bg-black flex flex-col">
+            <div className="lg:hidden fixed inset-0 bg-black flex flex-col pt-safe">
               {/* Slim top bar */}
               <div className="bg-gradient-to-r from-[#ff9100] to-[#ff1744] text-black px-4 py-2 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-2">

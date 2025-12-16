@@ -34,7 +34,9 @@ interface UseScoringReturn {
 const LOOPS_TO_SCORE = 4;
 
 // Timing window for a hit to be considered "correct" (milliseconds)
-const TIMING_WINDOW_MS = 150;
+// Generous window for kids + mobile touch latency
+// At 50 BPM, an eighth note is 600ms, so 350ms is ~60% of the step
+const TIMING_WINDOW_MS = 350;
 
 /**
  * Calculate stars from accuracy percentage
@@ -126,12 +128,12 @@ export function useScoring({
     const now = performance.now();
     const timeSinceStep = now - stepTimestampRef.current;
 
-    // For timing exercises, we use a slightly more generous window
+    // Get expected drums for this step
     const currentStepData = pattern.steps.find(s => s.step === currentStep + 1);
     const expectedDrums = currentStepData?.hit || [];
 
-    // Timing window (stricter for better scoring)
-    const windowMs = isTimingExercise ? 200 : TIMING_WINDOW_MS;
+    // Timing window - extra generous for timing exercises
+    const windowMs = isTimingExercise ? 450 : TIMING_WINDOW_MS;
 
     if (timeSinceStep > windowMs) {
       // Hit was too late, don't count it
