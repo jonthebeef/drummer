@@ -354,6 +354,7 @@ export default function ExerciseView({
                     userHit={null}
                     showCounting={true}
                     countingMode={exercise.countingMode}
+                    showKeyLegend={false}
                   />
                 </div>
               </div>

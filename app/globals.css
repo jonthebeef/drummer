@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* iOS Safe Area support for notch/status bar */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 @layer base {
   :root {
     --font-outfit: 'Outfit', sans-serif;

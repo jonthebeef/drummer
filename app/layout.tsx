@@ -17,6 +17,11 @@ const rubikMonoOne = Rubik_Mono_One({
 export const metadata: Metadata = {
   title: "Drummer - Learn Drums Like a Rockstar",
   description: "Rock out and learn drums one beat at a time",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    viewportFit: "cover", // Required for iOS safe area insets
+  },
 };
 
 export default function RootLayout({

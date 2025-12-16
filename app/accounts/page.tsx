@@ -50,8 +50,8 @@ export default function AccountsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Header */}
+    <div className="min-h-screen bg-black pt-safe">
+      {/* Header - pt-safe handles iOS notch/status bar */}
       <header className="bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 shadow-2xl border-b-2 border-zinc-600">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center justify-center gap-3">
