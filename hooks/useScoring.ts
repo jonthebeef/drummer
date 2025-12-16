@@ -20,6 +20,7 @@ interface UseScoringProps {
   currentStep: number;       // 0-indexed step from sequencer
   bpm: number;
   isTimingExercise?: boolean; // If true, accept any drum on marked steps
+  easyScoring?: boolean;      // If true, use more lenient star thresholds
 }
 
 interface UseScoringReturn {
@@ -41,8 +42,20 @@ const TIMING_WINDOW_MS = 350;
 /**
  * Calculate stars from accuracy percentage
  * Kid-friendly thresholds - encouraging but still challenging
+ *
+ * @param accuracy - Percentage of correct hits (0-100)
+ * @param easyMode - If true, use more lenient thresholds for beginner exercises
  */
-function calculateStars(accuracy: number): Stars {
+function calculateStars(accuracy: number, easyMode = false): Stars {
+  if (easyMode) {
+    // Extra lenient for very first exercises - encourage early success
+    if (accuracy >= 70) return 3;  // ⭐⭐⭐ Excellent!
+    if (accuracy >= 50) return 2;  // ⭐⭐ Great!
+    if (accuracy >= 30) return 1;  // ⭐ Good try!
+    return 0;  // Keep practicing
+  }
+
+  // Standard thresholds
   if (accuracy >= 90) return 3;  // ⭐⭐⭐ Excellent!
   if (accuracy >= 70) return 2;  // ⭐⭐ Great!
   if (accuracy >= 50) return 1;  // ⭐ Good try!
@@ -90,6 +103,7 @@ export function useScoring({
   currentStep,
   bpm,
   isTimingExercise = false,
+  easyScoring = false,
 }: UseScoringProps): UseScoringReturn {
   // Track hits for each step across all loops
   // Key: "loop-step" e.g. "0-3" = loop 0, step 3
@@ -223,7 +237,7 @@ export function useScoring({
       ? Math.round((correctHits / totalExpectedHits) * 100)
       : 0;
 
-    const stars = calculateStars(accuracy);
+    const stars = calculateStars(accuracy, easyScoring);
 
     return {
       totalSteps: totalExpectedHits,

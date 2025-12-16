@@ -11,7 +11,136 @@
 import { Exercise } from "@/types";
 
 export const exercises: Exercise[] = [
-  // ============ LEVEL 1: YOUR FIRST GROOVE ============
+  // ============ LEVEL 1: BEGINNER PATH (5-STEP CORE) ============
+
+  {
+    id: "beginner-01-timekeeping",
+    title: "Keeping Time with Hi Hat",
+    level: 1,
+    type: "timing",
+    instructions: `
+Welcome to drumming!
+
+Let's start with the **hi hat** - the shimmery cymbal you tap with one hand.
+
+**What to do:**
+- Listen to the pattern play four times
+- Then tap along: **1, 2, 3, 4**
+- Keep it steady like a clock ticking
+
+Use your keyboard **Spacebar** or tap the **Hi Hat button** below.
+
+Don't worry about being perfect - just feel the beat!
+    `,
+    counting: "1 2 3 4",
+    countingMode: "quarters",
+    tempoBpm: 50,
+    durationBars: 4,
+    patternId: "l1-hihat-quarters",
+  },
+
+  {
+    id: "beginner-02-add-kick",
+    title: "Adding the Kick Drum",
+    level: 1,
+    type: "groove",
+    instructions: `
+Time to add your **foot**!
+
+Now we'll play hi hat **and** kick drum together.
+
+**What to do:**
+- Hi hat on **1, 2, 3, 4** (Spacebar - right hand)
+- Kick drum **only on beat 1** (F key - foot)
+
+So beat 1 is **both at once**, then just hi hat for 2, 3, 4.
+
+Listen first, then give it a go!
+    `,
+    counting: "1 2 3 4",
+    countingMode: "quarters",
+    tempoBpm: 52,
+    durationBars: 4,
+    patternId: "l1-downbeat-intro",
+  },
+
+  {
+    id: "beginner-03-add-snare",
+    title: "Adding the Snare Drum",
+    level: 1,
+    type: "groove",
+    instructions: `
+Now let's add the **snare** - that's the sharp cracking sound!
+
+**What to do:**
+- Hi hat on **1, 2, 3, 4** (Spacebar)
+- Kick on **beat 1** (F key)
+- Snare on **beat 3** (J key)
+
+So: **1** (kick + hi hat) → **2** (hi hat) → **3** (snare + hi hat) → **4** (hi hat)
+
+This is your first proper groove! Take your time.
+    `,
+    counting: "1 2 3 4",
+    countingMode: "quarters",
+    tempoBpm: 54,
+    durationBars: 4,
+    patternId: "l1-first-groove",
+  },
+
+  {
+    id: "beginner-04-rock-groove-quarters",
+    title: "Classic Rock Groove",
+    level: 1,
+    type: "groove",
+    instructions: `
+🎸 **The classic rock beat!**
+
+This is what you hear in loads of songs.
+
+**What to do:**
+- Hi hat on **1, 2, 3, 4** (Spacebar)
+- Kick on **beats 1 and 3** (F key)
+- Snare on **beats 2 and 4** (J key)
+
+Say it with me: "**Kick** hi-hat, **Snare** hi-hat, **Kick** hi-hat, **Snare** hi-hat"
+
+You're playing a real rock beat now!
+    `,
+    counting: "1 2 3 4",
+    countingMode: "quarters",
+    tempoBpm: 56,
+    durationBars: 4,
+    patternId: "beginner-groove-quarters",
+  },
+
+  {
+    id: "beginner-05-rock-groove-eighths",
+    title: "Rock Groove with Eighth Notes",
+    level: 1,
+    type: "groove",
+    instructions: `
+Ready to play **faster**?
+
+Same groove, but now the hi hat goes **twice as fast**!
+
+**What to do:**
+- Hi hat: **1 and 2 and 3 and 4 and** (Spacebar eight times)
+- Kick on **beats 1 and 3** (F key)
+- Snare on **beats 2 and 4** (J key)
+
+The hi hat now plays on every beat **and** every "and". It sounds like a galloping horse! 🐴
+
+This is the sound of real rock music!
+    `,
+    counting: "1 & 2 & 3 & 4 &",
+    countingMode: "eighths",
+    tempoBpm: 58,
+    durationBars: 4,
+    patternId: "boots-and-cats",
+  },
+
+  // ============ ORIGINAL LEVEL 1 EXERCISES (for reference/future use) ============
 
   {
     id: "l1-01-counting",

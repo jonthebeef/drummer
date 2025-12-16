@@ -17,18 +17,13 @@ export const levels: Level[] = [
     id: "level-1",
     levelNumber: 1,
     name: "Level 1: Your First Groove",
-    description: "Learn the steady beat, control each limb, and play your first real drum grooves!",
+    description: "Start with quarter notes and build up to a classic rock beat, one step at a time!",
     exerciseIds: [
-      "l1-01-counting",           // 1. Counting 1 2 3 4
-      "l1-02-hihat-quarters",     // 2. Hi hat on every beat
-      "l1-03-snare-quarters",     // 3. Snare on every beat
-      "l1-04-kick-quarters",      // 4. Kick on every beat
-      "l1-05-backbeat-intro",     // 5. Hi hat steady, snare on 3
-      "l1-06-downbeat-intro",     // 6. Hi hat steady, kick on 1
-      "l1-07-first-groove",       // 7. First groove: kick 1, snare 3
-      "l1-08-groove-variation",   // 8. Groove variation: kick 1 and 3
-      "l1-09-hihat-eighths",      // 9. Introducing the "and": hi hat eighth notes
-      "l1-10-and-kick-groove",    // 10. First groove with an "and" kick
+      "beginner-01-timekeeping",        // 1. Quarter note timekeeping (hi-hat only)
+      "beginner-02-add-kick",           // 2. Add kick on beat 1
+      "beginner-03-add-snare",          // 3. Add snare on beat 3
+      "beginner-04-rock-groove-quarters", // 4. First groove in quarters (kick 1&3, snare 2&4)
+      "beginner-05-rock-groove-eighths",  // 5. Same groove in eighths
     ],
   },
 ];

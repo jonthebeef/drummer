@@ -231,6 +231,27 @@ export const patterns: Pattern[] = [
     ],
   },
 
+  // NEW: Classic rock groove in quarters (beginner path step 4)
+  {
+    id: "beginner-groove-quarters",
+    name: "Classic Rock Groove (Quarter Notes)",
+    difficulty: "easy",
+    description: "The classic rock beat! Hi hat steady, kick on 1 and 3, snare on 2 and 4.",
+    defaultTempoBpm: 56,
+    timeSignature: "4/4",
+    subdivision: "eighth",
+    steps: [
+      { step: 1, countLabel: "1", hit: ["hihat", "kick"] },   // 1: kick + hihat
+      { step: 2, countLabel: "&", hit: [] },
+      { step: 3, countLabel: "2", hit: ["hihat", "snare"] },  // 2: snare + hihat
+      { step: 4, countLabel: "&", hit: [] },
+      { step: 5, countLabel: "3", hit: ["hihat", "kick"] },   // 3: kick + hihat
+      { step: 6, countLabel: "&", hit: [] },
+      { step: 7, countLabel: "4", hit: ["hihat", "snare"] },  // 4: snare + hihat
+      { step: 8, countLabel: "&", hit: [] },
+    ],
+  },
+
   // ============ OTHER PATTERNS (from original app) ============
 
   {
