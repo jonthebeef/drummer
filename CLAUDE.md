@@ -82,11 +82,20 @@ No external audio files needed. Sounds are generated in real-time.
 
 ### Timing System
 
-`useSequencer` hook (`hooks/useSequencer.ts`) handles all timing:
+`useSequencer` hook (`hooks/useSequencer.ts`) handles all timing with **lookahead scheduling**:
 - Uses `requestAnimationFrame` for accurate step progression
+- **Lookahead scheduling**: Schedules audio events ahead of time for precise timing
 - Calculates step duration from BPM (for 8th notes: 60000 / bpm / 2)
-- Provides `onStepChange` callback that triggers drum sounds
+- Provides `onStepChange(step, time)` callback where:
+  - `step`: Current step index (0-7)
+  - `time`: AudioContext time when this step should sound (for scheduling)
+- Audio synthesis uses `time` parameter: `playDrum(drum, time)`, `playMetronomeClick(accent, time)`
 - Sequencer is 0-indexed (step 0-7), pattern data is 1-indexed (step 1-8)
+
+**Why lookahead scheduling?**
+- Prevents audio glitches and timing drift
+- Ensures drums play at exact scheduled times regardless of JavaScript execution
+- Web Audio API schedules events precisely on the audio thread
 
 ### Layout System
 
@@ -101,9 +110,46 @@ No external audio files needed. Sounds are generated in real-time.
 - Locked exercises show padlock, require previous completion
 - Progress bar only appears after first exercise completed
 
-**ExerciseView** - Theater mode layout:
-1. Top Section (dark): Title, DrumGrid, Controls
-2. Bottom Section (light, scrollable): Instructions, counting guide
+**ExerciseView** - State-driven lesson flow with responsive layouts:
+
+**Lesson States:**
+1. **READY**: Instructions + Start button (side-by-side on mobile landscape)
+2. **COUNTDOWN_LISTEN**: 3-2-1 countdown before listen phase (fullscreen on mobile)
+3. **LISTEN**: Auto-play pattern for 4 loops (fullscreen game mode on mobile)
+4. **COUNTDOWN_PRACTICE**: "Your turn!" countdown (fullscreen on mobile)
+5. **PRACTICE**: User plays along for 4 loops (fullscreen game mode on mobile)
+6. **RESULTS**: Stars display + continue button
+
+**Mobile Landscape Layout (< 768px, landscape orientation):**
+- **Fullscreen immersive mode** during LISTEN/PRACTICE/COUNTDOWN states
+- Header hidden during gameplay (shows only on READY/RESULTS)
+- `fixed inset-0` positioning fills entire viewport
+- Safe area support: `pt-safe` / `pb-safe` classes for notched devices
+
+**PRACTICE/LISTEN Game Layout:**
+```
+┌────────────────────────────────┐
+│ 🥁 2/4 ████  60 ▶             │ ← Slim bar (40px)
+├────┬───────────────────────┬───┤
+│    │                       │   │
+│🦵  │                       │🔔 │
+│F   │   HUGE DRUM GRID      │SPC│ ← Fills viewport
+│────│   (maximized)         │   │
+│🥁  │                       │   │
+│J   │                       │   │
+└────┴───────────────────────┴───┘
+```
+
+- 3-column grid: `[80px buttons | 1fr grid | 80px buttons]`
+- Left sidebar: KICK (top) + SNARE (bottom) stacked
+- Right sidebar: HIHAT (full height)
+- Center grid: Takes all remaining space
+- LISTEN mode: Buttons dimmed (opacity-30) but visible for layout consistency
+
+**Desktop Layout (≥ 768px):**
+- Header always visible
+- Traditional vertical stack: Banner → Grid → Buttons below
+- Unchanged from original design
 
 ## Key Interactions
 
@@ -121,16 +167,46 @@ No external audio files needed. Sounds are generated in real-time.
 - **M** = Toggle metronome
 
 ### Visual Feedback
+
 `DrumGrid` component shows:
-- Current step (green border, scale-up during playback)
-- Drum hits (colored circles - cyan/amber/purple)
-- User correct hits (green ring flash when hit matches step)
-- Optional `showKeyLegend` prop to hide keyboard shortcuts
+- **Current step**: Green border, scale-up during playback
+- **Drum hits**: Colored circles
+  - Cyan = Hi-hat
+  - Amber = Snare
+  - Purple = Kick
+- **User correct hits**: Green ring flash when hit matches step
+- **Step feedback**: `stepFeedback` prop shows correct/incorrect per step during practice
+- **Counting labels**: Displays above grid, respects `countingMode`
+  - "quarters" mode: Shows only "1 2 3 4"
+  - "eighths" mode: Shows "1 & 2 & 3 & 4 &"
+- **Keyboard legend**: Optional `showKeyLegend` prop (default: true)
+  - Set to `false` on mobile to hide keyboard shortcuts from touch users
 
 ### Practice Flow
-1. **Listen phase**: Pattern plays 4 loops automatically
-2. **Practice phase**: User taps along, gets visual feedback
-3. **Scoring**: Stars awarded based on accuracy (via `useScoring` hook)
+
+**Complete Lesson Sequence:**
+1. **READY**: Read instructions, press "START LESSON"
+2. **COUNTDOWN_LISTEN**: 3-2-1 countdown (fullscreen on mobile)
+3. **LISTEN**: Pattern auto-plays for 4 loops
+   - Drums play automatically using scheduled audio
+   - Grid highlights current step
+   - On mobile: Buttons dimmed but visible (layout consistency)
+4. **COUNTDOWN_PRACTICE**: "Your turn! 3-2-1-GO!" (fullscreen on mobile)
+5. **PRACTICE**: User plays along for 4 loops
+   - Tap drums using keyboard or touch buttons
+   - Visual feedback (green ring) on correct hits
+   - Grid shows step feedback
+   - Progress bar updates as loops complete
+6. **RESULTS**: Stars awarded based on accuracy
+   - 0 stars: "Back to Level Map" (no progression)
+   - 1+ stars: "Next Lesson" button unlocks next exercise
+   - Accuracy threshold: 50% = 1★, 70% = 2★, 90% = 3★
+
+**Scoring:**
+- Uses `useScoring` hook to track hits across 4 loops
+- Compares user input timing vs expected pattern
+- Timing window: 150ms for regular exercises, 200ms for timing exercises
+- `isTimingExercise` mode accepts any drum on marked steps (for counting practice)
 
 ## Adding New Musical Content
 
@@ -198,7 +274,9 @@ components/
 ├── ExerciseView.tsx (full exercise player, mobile fullscreen mode)
 ├── RotatePrompt.tsx (prompts mobile users to rotate to landscape)
 ├── TransportControls.tsx (play/pause/tempo/metronome)
-└── PracticeControls.tsx (listen/tap mode + mobile buttons)
+├── PracticeControls.tsx (listen/tap mode + mobile buttons)
+├── PostHogProvider.tsx (analytics consent management)
+└── CookieConsentBanner.tsx (GDPR-compliant consent UI)
 ```
 
 ## Important Constraints
@@ -217,14 +295,39 @@ components/
    - Already wired into play buttons and drum input
 
 4. **Mobile Considerations**:
-   - **Landscape-only gameplay**: `RotatePrompt` component prompts users to rotate phone
-   - **Fullscreen immersive mode**: During LISTEN/PRACTICE states on mobile:
-     - Header is hidden
-     - Content fills entire viewport (no padding/browser chrome)
-     - Slim top bar with progress/BPM only
-   - Tap buttons always visible in "tap along" mode
+
+   **Portrait Mode:**
+   - `RotatePrompt` component detects portrait orientation (height > width) on mobile
+   - Shows fullscreen overlay: "Please Rotate Your Device"
+   - Animated phone icon and visual hints
+   - Listens to `resize` and `orientationchange` events
+   - Auto-hides when user rotates to landscape
+
+   **Landscape Mode (< 768px width):**
+   - **Fullscreen immersive game mode** during LISTEN/PRACTICE/COUNTDOWN
+   - `fixed inset-0` positioning removes all browser chrome
+   - Header hidden during gameplay (only visible on READY/RESULTS)
+   - Safe area support with Tailwind classes: `pt-safe` / `pb-safe`
+   - 3-column game layout: buttons flanking centered grid
+   - Left sidebar (80px): KICK + SNARE stacked vertically
+   - Right sidebar (80px): HIHAT full height
+   - Center: Grid fills all remaining space (~85% of viewport)
+   - Slim top bar (40px): Progress bar + BPM + play status
+
+   **READY State Mobile:**
+   - Side-by-side layout in landscape: Instructions (scrollable) | Start button
+   - Uses `landscape:flex-row` for horizontal layout
+   - Stacked vertical on portrait (if rotation prompt bypassed)
+
+   **Input:**
+   - Touch buttons always visible during PRACTICE (hidden on desktop if keyboard detected)
    - Keyboard shortcuts work alongside tap buttons
-   - Desktop layout unchanged (header always visible)
+   - Touch targets: 80px wide x 50% height (buttons), minimum 48px per iOS guidelines
+
+   **Desktop (≥ 768px):**
+   - Traditional layout unchanged (vertical stack)
+   - Header always visible
+   - No fullscreen mode
 
 5. **Learning Progression**:
    - Level 1 tempos stay in 50s (50-60 BPM max)
@@ -286,14 +389,57 @@ Privacy-first analytics with GDPR-compliant consent management.
 - "No thanks" opts out completely
 - Consent stored in localStorage (`drummer_analytics_consent`)
 
+## Mobile Implementation Details
+
+### RotatePrompt Component
+Located in `components/RotatePrompt.tsx`:
+- Detects orientation using `window.innerHeight > window.innerWidth`
+- Only shows on mobile widths (< 768px) in portrait mode
+- `fixed inset-0 z-50` for fullscreen overlay
+- Animated bounce icon and visual phone rotation hint
+- Auto-hides when conditions no longer met
+
+### Fullscreen Game Mode
+Key CSS patterns for mobile landscape:
+```tsx
+// Fullscreen container (LISTEN/PRACTICE/COUNTDOWN)
+<div className="lg:hidden fixed inset-0 bg-black flex flex-col pt-safe">
+  {/* Slim top bar */}
+  <div className="flex-shrink-0 px-4 py-2">...</div>
+
+  {/* Game content fills remaining space */}
+  <div className="flex-1 grid grid-cols-[80px_1fr_80px] gap-2 p-2">
+    {/* Left buttons */}
+    {/* Center grid */}
+    {/* Right buttons */}
+  </div>
+</div>
+```
+
+Safe area classes (from `globals.css`):
+```css
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+```
+
+### Responsive Breakpoints
+- Mobile: `< 768px` (uses `lg:hidden` for mobile-only content)
+- Desktop: `≥ 768px` (uses `hidden lg:block` for desktop-only content)
+- Landscape detection: `landscape:` prefix modifier (Tailwind)
+
 ## Future Development Notes
 
-Currently v1 for Seb's birthday. See `V2_ROADMAP.md` for detailed plans.
+Currently v1 for Seb's birthday (Dec 15, 2025). See `V2_ROADMAP.md` for detailed plans.
 
-Planned expansions:
+**Planned v2 features:**
+- MIDI drum input support (Roland TD-11 testing week of Dec 16)
+- Sticking training (left/right hand patterns: RLRL, RRLL, paradiddles)
 - More levels (fills, dynamics, timing exercises)
-- Portrait mode support for mobile (currently landscape-only)
-- Accuracy scoring refinements
+- Portrait mode optimization (currently landscape-only)
+- Practice tools (looper, slow-motion, recording)
 - Better onboarding for Matilda (age 6) - simpler exercises
 
-Known issues documented in `MOBILE_ISSUES.md`.
+**Known Issues:**
+- See `MOBILE_ISSUES.md` for detailed mobile UX analysis
+- Safe area insets may need testing on more devices (iPhone notches, etc.)
+- DrumGrid text sizing could be more responsive for very small screens
