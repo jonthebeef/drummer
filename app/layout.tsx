@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, Rubik_Mono_One } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
@@ -17,11 +17,13 @@ const rubikMonoOne = Rubik_Mono_One({
 export const metadata: Metadata = {
   title: "Drummer - Learn Drums Like a Rockstar",
   description: "Rock out and learn drums one beat at a time",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    viewportFit: "cover", // Required for iOS safe area insets
-  },
+};
+
+// Separate viewport export (Next.js 15 requirement)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover", // Required for iOS safe area insets
 };
 
 export default function RootLayout({
