@@ -7,7 +7,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Exercise, Pattern } from "@/types";
+import { Exercise, Pattern, DrumType } from "@/types";
 import { getPatternById } from "@/data/patterns";
 import { useSequencer } from "@/hooks/useSequencer";
 import { useDrumInput } from "@/hooks/useDrumInput";
@@ -108,12 +108,32 @@ export default function ExerciseView({
   // Drum input hook for tap-along mode
   const { currentHit, hitDrum } = useDrumInput();
 
-  // When user hits a drum in practice mode, record it for scoring
+  // Perfect hit tracking (for explosion animation)
+  const [perfectHit, setPerfectHit] = useState<{ step: number; drum: DrumType } | null>(null);
+  const stepStartTimeRef = useRef(0);
+
+  // Track when each step starts (for perfect hit detection)
+  useEffect(() => {
+    stepStartTimeRef.current = performance.now();
+  }, [currentStep]);
+
+  // When user hits a drum in practice mode, record it for scoring and check for perfect hit
   useEffect(() => {
     if (currentHit && lessonState === "PRACTICE") {
       recordHit(currentHit);
+
+      // Check if this is a perfect hit (within 100ms of step start)
+      const timeSinceStepStart = performance.now() - stepStartTimeRef.current;
+      const patternStep = pattern.steps.find(s => s.step === currentStep + 1);
+      const isExpectedDrum = patternStep?.hit.includes(currentHit);
+
+      if (isExpectedDrum && timeSinceStepStart < 100) {
+        // Perfect hit! Show explosion
+        setPerfectHit({ step: currentStep, drum: currentHit });
+        setTimeout(() => setPerfectHit(null), 400); // Clear after animation
+      }
     }
-  }, [currentHit, lessonState, recordHit]);
+  }, [currentHit, lessonState, recordHit, currentStep, pattern.steps]);
 
   // Keyboard shortcuts: Arrow keys for tempo, 'M' for metronome
   useEffect(() => {
@@ -531,6 +551,7 @@ export default function ExerciseView({
                     countingMode={exercise.countingMode}
                     stepFeedback={getStepFeedback}
                     showKeyLegend={false}
+                    perfectHit={perfectHit}
                   />
                 </div>
 
@@ -573,6 +594,7 @@ export default function ExerciseView({
                   showCounting={true}
                   countingMode={exercise.countingMode}
                   stepFeedback={getStepFeedback}
+                  perfectHit={perfectHit}
                 />
               </div>
 

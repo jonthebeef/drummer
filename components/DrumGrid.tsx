@@ -20,6 +20,7 @@ interface DrumGridProps {
   countingMode?: CountingMode; // Visual mode: "quarters" hides "and" steps, "eighths" shows all
   showKeyLegend?: boolean;   // Show keyboard shortcut legend below grid
   stepFeedback?: (step: number) => "correct" | "incorrect" | null; // Scoring feedback per step
+  perfectHit?: { step: number; drum: DrumType } | null; // Perfect hit (dead-on timing)
 }
 
 export default function DrumGrid({
@@ -30,6 +31,7 @@ export default function DrumGrid({
   countingMode = "eighths", // Default to showing all steps
   showKeyLegend = true,
   stepFeedback,
+  perfectHit,
 }: DrumGridProps) {
   // Get the count label for a step (1, &, 2, &, etc.)
   const getCountLabel = (stepIndex: number): string => {
@@ -112,20 +114,37 @@ export default function DrumGrid({
                 const isCorrect = isCorrectHit(stepIndex, drum.type);
                 const feedback = stepFeedback ? stepFeedback(stepIndex) : null;
                 const isAndBeatInQuarters = countingMode === "quarters" && isAndBeat(stepIndex);
+                const isPerfect = perfectHit?.step === stepIndex && perfectHit?.drum === drum.type;
 
                 return (
                   <div
                     key={stepIndex}
                     className={`
-                      flex-1 aspect-square rounded-lg border-2 flex items-center justify-center
+                      relative flex-1 aspect-square rounded-lg border-2 flex items-center justify-center
                       transition-all duration-200
                       ${isCurrent ? "border-[#00ff88] bg-zinc-800 scale-105 shadow-lg shadow-[#00ff88]/50" : "border-zinc-700 bg-black"}
                       ${isCurrent && !isHit ? "bg-zinc-900" : ""}
                       ${feedback === "correct" && isHit ? "bg-green-900 border-[#00ff88]" : ""}
                       ${feedback === "incorrect" && isHit ? "bg-red-900 border-[#ff1744]" : ""}
                       ${isAndBeatInQuarters ? "opacity-30" : ""}
+                      ${isPerfect ? "bg-yellow-400/20" : ""}
                     `}
                   >
+                    {/* Perfect hit explosion effect */}
+                    {isPerfect && (
+                      <>
+                        {/* Outer burst */}
+                        <div className="absolute inset-0 rounded-lg animate-ping bg-yellow-400/40" />
+                        {/* Inner flash */}
+                        <div className="absolute inset-0 rounded-lg animate-pulse bg-white/30" />
+                        {/* Particles */}
+                        <div className="absolute top-0 left-1/2 w-2 h-2 bg-yellow-300 rounded-full animate-bounce" />
+                        <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                        <div className="absolute left-0 top-1/2 w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        <div className="absolute right-0 top-1/2 w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
+                      </>
+                    )}
+
                     {/* Drum hit circle */}
                     {isHit && (
                       <div
@@ -136,6 +155,7 @@ export default function DrumGrid({
                           ${isCorrect ? "ring-4 ring-green-400 scale-110" : ""}
                           ${feedback === "correct" ? "ring-2 ring-green-500" : ""}
                           ${feedback === "incorrect" ? "ring-2 ring-red-500 opacity-60" : ""}
+                          ${isPerfect ? "ring-8 ring-yellow-400 scale-150" : ""}
                           transition-all duration-200
                         `}
                       />

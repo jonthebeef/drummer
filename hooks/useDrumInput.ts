@@ -63,6 +63,9 @@ export function useDrumInput(): UseDrumInputReturn {
    */
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
+      // Ignore repeated keydown events when key is held down
+      if (event.repeat) return;
+
       const drum = KEY_TO_DRUM[event.key];
       if (drum) {
         event.preventDefault(); // Prevent spacebar from scrolling, etc.
