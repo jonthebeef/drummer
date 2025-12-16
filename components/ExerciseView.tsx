@@ -267,68 +267,134 @@ export default function ExerciseView({
       <div className={`${(lessonState === "LISTEN" || lessonState === "PRACTICE") ? "" : "max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8"}`}>
         {/* READY STATE - Big Start Button */}
         {lessonState === "READY" && (
-          <div className="space-y-8">
-            {/* Instructions */}
-            <div className="bg-zinc-900 rounded-2xl border-2 border-[#00d9ff] p-8 shadow-2xl">
-              <h2 className="text-3xl font-bold text-[#00d9ff] mb-4 flex items-center gap-2">
-                📖 What You'll Learn
-              </h2>
-              <div className="text-zinc-300 text-lg leading-relaxed">
-                <div dangerouslySetInnerHTML={{
-                  __html: exercise.instructions
-                    .replace(/\*\*(.+?)\*\*/g, '<strong class="text-[#00ff88]">$1</strong>')
-                    .replace(/\n\n/g, '</p><p class="mb-4">')
-                    .replace(/\n/g, '<br />')
-                }} />
+          <>
+            {/* MOBILE LANDSCAPE: Side-by-side layout */}
+            <div className="lg:hidden landscape:flex landscape:gap-4 landscape:items-start portrait:space-y-6">
+              {/* Left: Instructions (compact) */}
+              <div className="landscape:flex-1 landscape:max-h-[calc(100vh-120px)] landscape:overflow-y-auto">
+                <div className="bg-zinc-900 rounded-xl border-2 border-[#00d9ff] p-4 shadow-2xl">
+                  <h2 className="text-xl font-bold text-[#00d9ff] mb-2 flex items-center gap-2">
+                    📖 What You'll Learn
+                  </h2>
+                  <div className="text-zinc-300 text-sm leading-relaxed">
+                    <div dangerouslySetInnerHTML={{
+                      __html: exercise.instructions
+                        .replace(/\*\*(.+?)\*\*/g, '<strong class="text-[#00ff88]">$1</strong>')
+                        .replace(/\n\n/g, '</p><p class="mb-2">')
+                        .replace(/\n/g, '<br />')
+                    }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Start button + counting (stacked) */}
+              <div className="landscape:w-64 landscape:flex-shrink-0 flex flex-col gap-3">
+                <button
+                  onClick={handleStart}
+                  className="bg-[#ff9100] hover:bg-[#ffd600] text-black font-bold text-2xl landscape:text-xl px-8 py-6 landscape:py-8 rounded-xl shadow-2xl transition-all transform hover:scale-105 border-4 border-[#ff9100] hover:border-[#ffd600] w-full"
+                >
+                  🚀 START
+                </button>
+                <div className="bg-black border-2 border-[#ff0080] rounded-lg p-3 text-center">
+                  <div className="text-sm text-[#ff0080] font-bold">Count:</div>
+                  <div className="text-xl font-mono font-bold text-white">
+                    {exercise.counting}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Big Start Button */}
-            <div className="text-center">
-              <button
-                onClick={handleStart}
-                className="bg-[#ff9100] hover:bg-[#ffd600] text-black font-bold text-4xl px-20 py-10 rounded-2xl shadow-2xl transition-all transform hover:scale-105 border-4 border-[#ff9100] hover:border-[#ffd600]"
-              >
-                🚀 START LESSON
-              </button>
-            </div>
+            {/* DESKTOP: Original layout */}
+            <div className="hidden lg:block space-y-8">
+              {/* Instructions */}
+              <div className="bg-zinc-900 rounded-2xl border-2 border-[#00d9ff] p-8 shadow-2xl">
+                <h2 className="text-3xl font-bold text-[#00d9ff] mb-4 flex items-center gap-2">
+                  📖 What You'll Learn
+                </h2>
+                <div className="text-zinc-300 text-lg leading-relaxed">
+                  <div dangerouslySetInnerHTML={{
+                    __html: exercise.instructions
+                      .replace(/\*\*(.+?)\*\*/g, '<strong class="text-[#00ff88]">$1</strong>')
+                      .replace(/\n\n/g, '</p><p class="mb-4">')
+                      .replace(/\n/g, '<br />')
+                  }} />
+                </div>
+              </div>
 
-            {/* Counting guide */}
-            <div className="bg-black border-2 border-[#ff0080] rounded-xl p-6 text-center">
-              <div className="text-xl text-[#ff0080] font-bold mb-2">Count along:</div>
-              <div className="text-4xl font-mono font-bold text-white">
-                {exercise.counting}
+              {/* Big Start Button */}
+              <div className="text-center">
+                <button
+                  onClick={handleStart}
+                  className="bg-[#ff9100] hover:bg-[#ffd600] text-black font-bold text-4xl px-20 py-10 rounded-2xl shadow-2xl transition-all transform hover:scale-105 border-4 border-[#ff9100] hover:border-[#ffd600]"
+                >
+                  🚀 START LESSON
+                </button>
+              </div>
+
+              {/* Counting guide */}
+              <div className="bg-black border-2 border-[#ff0080] rounded-xl p-6 text-center">
+                <div className="text-xl text-[#ff0080] font-bold mb-2">Count along:</div>
+                <div className="text-4xl font-mono font-bold text-white">
+                  {exercise.counting}
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
 
-        {/* COUNTDOWN STATES - Responsive sizing */}
+        {/* COUNTDOWN STATES - Fullscreen on mobile landscape */}
         {(lessonState === "COUNTDOWN_LISTEN" || lessonState === "COUNTDOWN_PRACTICE") && (
-          <div className="flex items-center justify-center min-h-[50vh] md:min-h-[60vh]">
-            <div className="text-center">
-              {countdown > 0 ? (
-                <>
-                  <div className="text-8xl md:text-[200px] font-bold text-[#00ff88] mb-6 md:mb-12 animate-pulse">
-                    {countdown}
+          <>
+            {/* MOBILE LANDSCAPE: Fullscreen immersive countdown */}
+            <div className="lg:hidden fixed inset-0 bg-black flex items-center justify-center z-50">
+              <div className="text-center">
+                {countdown > 0 ? (
+                  <>
+                    <div className={`text-[180px] sm:text-[220px] font-bold mb-4 animate-pulse leading-none ${
+                      lessonState === "COUNTDOWN_LISTEN" ? "text-[#00ff88]" : "text-[#ff9100]"
+                    }`}>
+                      {countdown}
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-bold text-zinc-300">
+                      {lessonState === "COUNTDOWN_LISTEN" ? "👂 Get ready to watch..." : "🥁 Your turn!"}
+                    </div>
+                  </>
+                ) : (
+                  <div className={`text-[120px] sm:text-[160px] font-bold animate-pulse leading-none ${
+                    lessonState === "COUNTDOWN_LISTEN" ? "text-[#00d9ff]" : "text-[#ff9100]"
+                  }`}>
+                    {lessonState === "COUNTDOWN_LISTEN" ? "WATCH!" : "GO!"}
                   </div>
-                  <div className="text-2xl md:text-5xl font-bold text-zinc-300">
-                    {lessonState === "COUNTDOWN_LISTEN" ? "👂 Get ready to watch..." : "🥁 Your turn!"}
-                  </div>
-                </>
-              ) : (
-                <div className="text-6xl md:text-9xl font-bold text-[#ff9100] animate-pulse">
-                  {lessonState === "COUNTDOWN_LISTEN" ? "WATCH!" : "GO!"}
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
+
+            {/* DESKTOP: Original layout */}
+            <div className="hidden lg:flex items-center justify-center min-h-[60vh]">
+              <div className="text-center">
+                {countdown > 0 ? (
+                  <>
+                    <div className="text-[200px] font-bold text-[#00ff88] mb-12 animate-pulse">
+                      {countdown}
+                    </div>
+                    <div className="text-5xl font-bold text-zinc-300">
+                      {lessonState === "COUNTDOWN_LISTEN" ? "👂 Get ready to watch..." : "🥁 Your turn!"}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-9xl font-bold text-[#ff9100] animate-pulse">
+                    {lessonState === "COUNTDOWN_LISTEN" ? "WATCH!" : "GO!"}
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
         )}
 
         {/* LISTEN STATE */}
         {lessonState === "LISTEN" && (
           <>
-            {/* MOBILE LANDSCAPE: Fullscreen game mode */}
+            {/* MOBILE LANDSCAPE: Fullscreen game mode with dimmed buttons */}
             <div className="lg:hidden fixed inset-0 bg-black flex flex-col">
               {/* Slim top bar */}
               <div className="bg-gradient-to-r from-[#00d9ff] to-[#2979ff] text-black px-4 py-2 flex items-center justify-between flex-shrink-0">
@@ -345,9 +411,24 @@ export default function ExerciseView({
                 <div className="text-sm font-bold">WATCH & LISTEN</div>
               </div>
 
-              {/* Full-screen drum grid (no side buttons in listen mode) */}
-              <div className="flex-1 p-2">
-                <div className="h-full bg-zinc-900 rounded-lg shadow-2xl p-4 border-2 border-[#00d9ff] flex items-center justify-center">
+              {/* 3-column layout with DIMMED buttons (same as PRACTICE) */}
+              <div className="flex-1 grid grid-cols-[80px_1fr_80px] gap-2 p-2">
+                {/* Left sidebar: KICK + SNARE (dimmed, disabled) */}
+                <div className="flex flex-col gap-2 opacity-30">
+                  <div className="flex-1 bg-gradient-to-br from-[#2979ff] to-[#0050d0] text-white font-bold rounded-lg shadow-xl border-2 border-[#2979ff] flex flex-col items-center justify-center">
+                    <div className="text-3xl mb-1">🦵</div>
+                    <div className="text-xs">KICK</div>
+                    <div className="text-xs opacity-75">F</div>
+                  </div>
+                  <div className="flex-1 bg-gradient-to-br from-[#ff1744] to-[#c0001a] text-white font-bold rounded-lg shadow-xl border-2 border-[#ff1744] flex flex-col items-center justify-center">
+                    <div className="text-3xl mb-1">🥁</div>
+                    <div className="text-xs">SNARE</div>
+                    <div className="text-xs opacity-75">J</div>
+                  </div>
+                </div>
+
+                {/* Center: Drum grid */}
+                <div className="bg-zinc-900 rounded-lg shadow-2xl p-3 border-2 border-[#00d9ff] flex items-center justify-center overflow-hidden">
                   <DrumGrid
                     pattern={pattern}
                     currentStep={isPlaying ? currentStep : undefined}
@@ -356,6 +437,15 @@ export default function ExerciseView({
                     countingMode={exercise.countingMode}
                     showKeyLegend={false}
                   />
+                </div>
+
+                {/* Right sidebar: HIHAT (dimmed, disabled) */}
+                <div className="flex flex-col opacity-30">
+                  <div className="flex-1 bg-gradient-to-br from-[#00d9ff] to-[#00a0c0] text-black font-bold rounded-lg shadow-xl border-2 border-[#00d9ff] flex flex-col items-center justify-center">
+                    <div className="text-3xl mb-1">🔔</div>
+                    <div className="text-xs">HIHAT</div>
+                    <div className="text-xs opacity-75">SPC</div>
+                  </div>
                 </div>
               </div>
             </div>
