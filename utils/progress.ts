@@ -80,11 +80,14 @@ export function saveExerciseProgress(
  * Check if an exercise is unlocked
  * An exercise is unlocked if:
  * 1. It's the first exercise in the level, OR
- * 2. The previous exercise has been completed (has at least 1 star)
+ * 2. The previous exercise has been completed:
+ *    - Level 1: Requires at least 2 stars (slower progression for beginners)
+ *    - Other levels: Requires at least 1 star
  */
 export function isExerciseUnlocked(
   exerciseId: string,
-  allExerciseIds: string[]
+  allExerciseIds: string[],
+  levelNumber?: number
 ): boolean {
   const index = allExerciseIds.indexOf(exerciseId);
 
@@ -94,9 +97,12 @@ export function isExerciseUnlocked(
   // Check if previous exercise has been completed
   const previousExerciseId = allExerciseIds[index - 1];
   const previousProgress = getExerciseProgress(previousExerciseId);
-  const isUnlocked = previousProgress !== null && previousProgress.stars >= 1;
 
-  console.log(`Checking if ${exerciseId} is unlocked: previous=${previousExerciseId}, progress=`, previousProgress, `unlocked=${isUnlocked}`);
+  // Level 1 requires 2 stars, other levels require 1 star
+  const starsRequired = levelNumber === 1 ? 2 : 1;
+  const isUnlocked = previousProgress !== null && previousProgress.stars >= starsRequired;
+
+  console.log(`Checking if ${exerciseId} is unlocked: previous=${previousExerciseId}, progress=`, previousProgress, `level=${levelNumber}, starsRequired=${starsRequired}, unlocked=${isUnlocked}`);
 
   return isUnlocked;
 }

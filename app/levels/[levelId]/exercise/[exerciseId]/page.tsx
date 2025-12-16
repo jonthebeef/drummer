@@ -26,7 +26,7 @@ export default function ExercisePage() {
   const exerciseIds = levelExercises.map(e => e.id);
 
   // Check if this exercise is unlocked
-  const unlocked = exercise ? isExerciseUnlocked(exercise.id, exerciseIds) : false;
+  const unlocked = exercise ? isExerciseUnlocked(exercise.id, exerciseIds, levelId) : false;
 
   // Track exercise started
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function ExercisePage() {
       const nextExercise = levelExercises[currentIndex + 1];
 
       // Verify the next exercise is unlocked (current exercise should now be complete)
-      if (isExerciseUnlocked(nextExercise.id, exerciseIds)) {
+      if (isExerciseUnlocked(nextExercise.id, exerciseIds, levelId)) {
         router.push(`/levels/${levelId}/exercise/${nextExercise.id}`);
       } else {
         // Next exercise is still locked - return to map

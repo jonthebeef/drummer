@@ -101,7 +101,7 @@ export default function LevelMap({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
           {exercises.map((exercise, index) => {
             const stars = getExerciseStars(exercise.id);
-            const isUnlocked = isExerciseUnlocked(exercise.id, exerciseIds);
+            const isUnlocked = isExerciseUnlocked(exercise.id, exerciseIds, exercise.level);
             const isCompleted = stars > 0;
 
             return (

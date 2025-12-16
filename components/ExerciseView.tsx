@@ -103,7 +103,6 @@ export default function ExerciseView({
     currentStep,
     bpm,
     isTimingExercise: exercise.type === "timing",
-    easyScoring: exercise.id === "beginner-01-timekeeping" || exercise.id === "beginner-02-add-kick", // More lenient for first 2 exercises
   });
 
   // Drum input hook for tap-along mode

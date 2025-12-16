@@ -17,13 +17,28 @@ export const levels: Level[] = [
     id: "level-1",
     levelNumber: 1,
     name: "Level 1: Your First Groove",
-    description: "Start with quarter notes and build up to a classic rock beat, one step at a time!",
+    description: "Build your first rock beat through practice and repetition. Take your time!",
     exerciseIds: [
-      "beginner-01-timekeeping",        // 1. Quarter note timekeeping (hi-hat only)
-      "beginner-02-add-kick",           // 2. Add kick on beat 1
-      "beginner-03-add-snare",          // 3. Add snare on beat 3
-      "beginner-04-rock-groove-quarters", // 4. First groove in quarters (kick 1&3, snare 2&4)
-      "beginner-05-rock-groove-eighths",  // 5. Same groove in eighths
+      // Set A: Hi-hat quarters (3 exercises)
+      "l1-01-hihat-intro",
+      "l1-02-hihat-again",
+      "l1-03-hihat-longer",
+      // Set B: Add kick on 1 (3 exercises)
+      "l1-04-kick-intro",
+      "l1-05-kick-again",
+      "l1-06-kick-longer",
+      // Set C: Add snare on 3 (3 exercises)
+      "l1-07-snare-intro",
+      "l1-08-snare-again",
+      "l1-09-snare-longer",
+      // Set D: Classic rock groove quarters (3 exercises)
+      "l1-10-rock-intro",
+      "l1-11-rock-again",
+      "l1-12-rock-longer",
+      // Set E: Same groove with eighths (3 exercises)
+      "l1-13-eighths-intro",
+      "l1-14-eighths-again",
+      "l1-15-eighths-master",
     ],
   },
 ];
