@@ -49,16 +49,16 @@ export default function LevelMap({
   const exerciseIds = exercises.map(e => e.id);
 
   return (
-    <div className="min-h-screen bg-black py-10 pb-16">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="min-h-screen bg-black py-6 sm:py-10 pb-16 overflow-x-hidden">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4">
         {/* Header */}
-        <div className="text-white mb-8">
-          <h1 className="text-5xl font-logo mb-4 tracking-wide">
+        <div className="text-white mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-5xl font-logo mb-3 sm:mb-4 tracking-wide">
             <span className="text-[#00ff88]">{levelName.split(":")[0].toUpperCase()}:</span>
             <br />
             <span className="text-white">{levelName.split(":")[1]?.trim().toUpperCase()}</span>
           </h1>
-          <p className="text-zinc-300 text-xl font-bold">{levelDescription}</p>
+          <p className="text-zinc-300 text-base sm:text-xl font-bold">{levelDescription}</p>
         </div>
 
         {/* Progress summary - only show if user has completed at least one exercise */}
@@ -93,12 +93,12 @@ export default function LevelMap({
         )}
 
         {/* How to practice guide */}
-        <div className="mb-8 text-zinc-400 text-lg">
+        <div className="mb-6 sm:mb-8 text-zinc-400 text-sm sm:text-lg">
           Pick a lesson → Watch 2x → Play 4 loops → Get stars!
         </div>
 
         {/* Lesson grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
           {exercises.map((exercise, index) => {
             const stars = getExerciseStars(exercise.id);
             const isUnlocked = isExerciseUnlocked(exercise.id, exerciseIds);
@@ -110,7 +110,7 @@ export default function LevelMap({
                 onClick={() => isUnlocked && onSelectExercise(exercise)}
                 disabled={!isUnlocked}
                 className={`
-                  relative p-8 rounded-2xl border-4 transition-all transform hover:scale-105 shadow-2xl
+                  relative p-5 sm:p-8 rounded-2xl border-4 transition-all transform hover:scale-105 shadow-2xl
                   ${isUnlocked
                     ? "bg-gradient-to-br from-zinc-900 to-black border-[#00d9ff] hover:border-[#00ff88] hover:shadow-[#00ff88]/50 cursor-pointer"
                     : "bg-zinc-950 border-zinc-800 opacity-40 cursor-not-allowed"
@@ -120,8 +120,8 @@ export default function LevelMap({
               >
                 {/* Lesson number badge */}
                 <div className={`
-                  absolute -top-4 -left-4 w-16 h-16 rounded-full flex items-center justify-center
-                  font-bold text-2xl shadow-2xl border-4
+                  absolute -top-3 -left-3 sm:-top-4 sm:-left-4 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center
+                  font-bold text-xl sm:text-2xl shadow-2xl border-4
                   ${isCompleted ? "bg-[#ffd600] text-black border-[#ffd600]" : "bg-[#00d9ff] text-black border-[#00d9ff]"}
                 `}>
                   {index + 1}
@@ -129,14 +129,14 @@ export default function LevelMap({
 
                 {/* Lock icon for locked lessons */}
                 {!isUnlocked && (
-                  <div className="absolute top-6 right-6 text-4xl opacity-50">
+                  <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-3xl sm:text-4xl opacity-50">
                     🔒
                   </div>
                 )}
 
                 {/* Title */}
                 <h3 className={`
-                  text-xl font-bold mb-3 mt-4
+                  text-lg sm:text-xl font-bold mb-2 sm:mb-3 mt-3 sm:mt-4
                   ${isUnlocked ? "text-[#00ff88]" : "text-zinc-600"}
                 `}>
                   {exercise.title}
@@ -144,7 +144,7 @@ export default function LevelMap({
 
                 {/* Short description from pattern */}
                 <p className={`
-                  text-base mb-6 font-semibold
+                  text-sm sm:text-base mb-4 sm:mb-6 font-semibold
                   ${isUnlocked ? "text-zinc-400" : "text-zinc-700"}
                 `}>
                   {exercise.type === "timing" ? "⏱️ Learn timing" : "🥁 Practice groove"}
@@ -155,7 +155,7 @@ export default function LevelMap({
 
                 {/* Unlock hint */}
                 {!isUnlocked && index > 0 && (
-                  <p className="text-base text-zinc-600 mt-4 font-semibold">
+                  <p className="text-sm sm:text-base text-zinc-600 mt-3 sm:mt-4 font-semibold">
                     Complete lesson {index} first!
                   </p>
                 )}
