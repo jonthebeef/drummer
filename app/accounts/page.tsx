@@ -65,7 +65,7 @@ export default function AccountsPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <main className="max-w-4xl mx-auto px-4 py-6 sm:py-12">
         {!isCreating ? (
           // Account Selection Screen
           <div className="space-y-8">
@@ -106,19 +106,19 @@ export default function AccountsPage() {
           </div>
         ) : (
           // Account Creation Screen
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-8">
             <div className="text-center">
-              <h2 className="text-4xl font-bold text-[#ff9100] mb-3">
+              <h2 className="text-2xl sm:text-4xl font-bold text-[#ff9100] mb-2 sm:mb-3">
                 Create Your Account
               </h2>
-              <p className="text-xl text-zinc-400">
+              <p className="text-base sm:text-xl text-zinc-400">
                 Pick a cool avatar and tell us your name!
               </p>
             </div>
 
             {/* Name Input */}
-            <div className="bg-zinc-900 rounded-2xl p-8 border-2 border-[#ff9100]">
-              <h3 className="text-2xl font-bold text-[#ff9100] mb-6 text-center">
+            <div className="bg-zinc-900 rounded-2xl p-4 sm:p-8 border-2 border-[#ff9100]">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#ff9100] mb-4 sm:mb-6 text-center">
                 What's Your Name?
               </h3>
               <input
@@ -127,7 +127,7 @@ export default function AccountsPage() {
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="Enter your name..."
                 maxLength={20}
-                className="w-full text-3xl font-bold text-center px-6 py-4 rounded-xl bg-black text-white border-4 border-zinc-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                className="w-full text-2xl sm:text-3xl font-bold text-center px-4 sm:px-6 py-3 sm:py-4 rounded-xl bg-black text-white border-4 border-zinc-700 focus:border-[#00ff88] focus:outline-none transition-colors"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && newName.trim()) {
                     handleCreateAccount();
@@ -137,17 +137,17 @@ export default function AccountsPage() {
             </div>
 
             {/* Avatar Selection */}
-            <div className="bg-zinc-900 rounded-2xl p-8 border-2 border-[#00d9ff]">
-              <h3 className="text-2xl font-bold text-[#00d9ff] mb-6 text-center">
+            <div className="bg-zinc-900 rounded-2xl p-4 sm:p-8 border-2 border-[#00d9ff]">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#00d9ff] mb-4 sm:mb-6 text-center">
                 Choose Your Avatar
               </h3>
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid grid-cols-5 gap-2 sm:gap-4">
                 {AVATARS.map((avatar) => (
                   <button
                     key={avatar}
                     onClick={() => setSelectedAvatar(avatar)}
                     className={`
-                      text-6xl p-4 rounded-xl transition-all transform hover:scale-110
+                      text-4xl sm:text-6xl p-2 sm:p-4 rounded-xl transition-all transform hover:scale-110
                       ${selectedAvatar === avatar
                         ? "bg-[#00ff88] scale-110 shadow-2xl ring-4 ring-[#00ff88]"
                         : "bg-zinc-800 hover:bg-zinc-700"
@@ -161,14 +161,14 @@ export default function AccountsPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-6 justify-center">
+            <div className="flex gap-3 sm:gap-6 justify-center">
               <button
                 onClick={() => {
                   setIsCreating(false);
                   setNewName("");
                   setSelectedAvatar(AVATARS[0]);
                 }}
-                className="bg-zinc-700 hover:bg-zinc-600 text-white font-bold text-2xl px-12 py-6 rounded-2xl transition-all shadow-2xl hover:scale-105 border-4 border-zinc-700 hover:border-zinc-600"
+                className="bg-zinc-700 hover:bg-zinc-600 text-white font-bold text-lg sm:text-2xl px-6 sm:px-12 py-4 sm:py-6 rounded-2xl transition-all shadow-2xl hover:scale-105 border-4 border-zinc-700 hover:border-zinc-600"
               >
                 ⬅️ Back
               </button>
@@ -176,7 +176,7 @@ export default function AccountsPage() {
                 onClick={handleCreateAccount}
                 disabled={!newName.trim()}
                 className={`
-                  font-bold text-2xl px-12 py-6 rounded-2xl transition-all shadow-2xl border-4
+                  font-bold text-lg sm:text-2xl px-6 sm:px-12 py-4 sm:py-6 rounded-2xl transition-all shadow-2xl border-4
                   ${newName.trim()
                     ? "bg-[#00ff88] hover:bg-[#00d9ff] text-black hover:scale-105 border-[#00ff88] hover:border-[#00d9ff]"
                     : "bg-zinc-800 text-zinc-600 cursor-not-allowed border-zinc-800"
@@ -191,7 +191,7 @@ export default function AccountsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 pb-8 text-center text-lg text-zinc-600 font-semibold">
+      <footer className="mt-8 sm:mt-16 pb-4 sm:pb-8 text-center text-sm sm:text-lg text-zinc-600 font-semibold pb-safe">
         <p>Made for young rockers • Keep drumming! 🤘</p>
       </footer>
     </div>
